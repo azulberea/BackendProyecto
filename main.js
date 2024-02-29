@@ -1,11 +1,11 @@
-const fs = require("fs") //esta bien que lo declare aca? 
+const fs = require("fs") 
 
 class productManager{
     
     constructor(){
         this.productos = []
         this.path = "./archivosProductManager/productManager.json"
-        this.file = fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t")) //al instanciar otro productmanager, se sobre escribiria este archivo? estaria mal?
+        this.file = fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t")) 
     }
 
     addProduct(title, description, price, thumbnail, stock){
@@ -18,7 +18,7 @@ class productManager{
             description: description,
             price: price,
             thumbnail: thumbnail,
-            id: getId(), //la consigna pedia el campo code y luego tmb pide el campo id, cuale s la dif? xq yo los interprete como lo mismo.
+            id: getId(), 
             stock: stock,
         }
         function validarPropiedadesVacias(productoAAgregar) {
@@ -29,7 +29,7 @@ class productManager{
             }return false
         }
         // function validarProductoExistente(tituloAAgregar){
-        //     this.productos.some(producto=>producto.title == tituloAAgregar) -----> no se por que no puedo acceder al array productos
+        //     this.productos.some(producto=>producto.title == tituloAAgregar) 
         // }
         if(validarPropiedadesVacias(productoAAgregar)){
             console.error()("debes llenar todos los campos")
