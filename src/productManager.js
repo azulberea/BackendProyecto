@@ -55,8 +55,8 @@ export class productManager{
     getProductById(id){
         let file = JSON.parse(fs.readFileSync(this.path, "utf8"));    
         for(let producto of file){    
-            if(producto.id === id){    
-                return producto   
+            if(producto.id == id){    
+                return producto  
             }    
         }    
         return "Not found"
