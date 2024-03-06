@@ -1,11 +1,15 @@
-const fs = require("fs") 
+import fs from "fs" 
 
-class productManager{
+export class productManager{
     
     constructor(){
         this.productos = []
         this.path = "./archivosProductManager/productManager.json"
         this.file = fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t")) 
+    }
+
+    validarProductoExistente(tituloAAgregar){
+        return this.productos.some(producto => producto.title == tituloAAgregar)    
     }
 
     addProduct(title, description, price, thumbnail, stock){
@@ -28,16 +32,14 @@ class productManager{
                 }
             }return false
         }
-        // function validarProductoExistente(tituloAAgregar){
-        //     this.productos.some(producto=>producto.title == tituloAAgregar) 
-        // }
         if(validarPropiedadesVacias(productoAAgregar)){
-            console.error()("debes llenar todos los campos")
+            console.error("debes llenar todos los campos")
+            return
         }
-        // else if(validarProductoExistente(productoAAgregar.title)){
-        //     console.log("Producto existente")
-        // }
-        else{
+        if(this.validarProductoExistente(productoAAgregar.title)){
+            console.log("Producto existente, intente agregar otro")
+            return
+        }else{
             this.productos.push(productoAAgregar)
             if(fs.existsSync(this.path)){
                 fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t"))
@@ -51,14 +53,13 @@ class productManager{
     }
 
     getProductById(id){
-        let file = JSON.parse(fs.readFileSync(this.path, "utf8"))
-        for(let producto of file){
-            if(producto.id === id){
-                return producto
-            }else{
-                return "Not found"
-            }
-        }
+        let file = JSON.parse(fs.readFileSync(this.path, "utf8"));    
+        for(let producto of file){    
+            if(producto.id === id){    
+                return producto   
+            }    
+        }    
+        return "Not found"
     }
 
     deleteProduct(id){
@@ -86,24 +87,30 @@ class productManager{
             console.log("Product ID not found")
         }
     }
-
 }
+
 
 // TESTING:
 
-// let instancia1 = new productManager
+let instancia1 = new productManager
+
+console.log(instancia1.getProducts())
+
+instancia1.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", 25)
+// instancia1.addProduct("producto prueba 2", "Este es un producto prueba", 200, "Sin imagen", 25)
+// instancia1.addProduct("producto prueba 3", "Este es un producto prueba", 200, "Sin imagen", 25)
+// instancia1.addProduct("azul", "Este es un producto prueba", 200, "Sin imagen", 25)
+// instancia1.addProduct("azul", "Este es un producto prueba", 200, "Sin imagen", 25)
+
 
 // console.log(instancia1.getProducts())
 
-// instancia1.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", 25)
-
-// console.log(instancia1.getProducts())
-
-// console.log(instancia1.getProductById(1))
+//  console.log(instancia1.getProductById(1))
 // console.log(instancia1.getProductById(6))
 
 // instancia1.updateProduct(1, "title", "cambio de titulo")
 // instancia1.updateProduct(1, "id", 89)
 
 // instancia1.deleteProduct(1)
+// instancia1.deleteProduct(2)
 // instancia1.deleteProduct(999)
