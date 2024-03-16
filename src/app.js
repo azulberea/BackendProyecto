@@ -9,22 +9,18 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 app.get("/", (req, res)=>{
-    res.send("hola mundo")
+
+    res.status(200).send("Hola mundo")
+
 })
 
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartsRouter)
 
-
-// app.get("/products/:productid", (req, res)=>{
-//     let productId = req.params.productid
-//     let productRequired = instancia1.getProductById(productId)
-//     res.send(productRequired)
-// })
-
-
 const PORT = 8080
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
+
     console.log(`server arctivo en http://localhost:${PORT}`)
+    
 })

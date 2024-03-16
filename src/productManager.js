@@ -1,26 +1,37 @@
 import fs from "fs" 
 
-export class productManager{
+export class productManager {
     
     constructor() {
+
         this.productos = []    
-        this.path = "./data/productManager.json"    
-        if (!fs.existsSync(this.path)){   
-            fs.writeFileSync(this.path, JSON.stringify(this.productos, null, "\t"));
-        } else {    
-        this.productos = JSON.parse(fs.readFileSync(this.path, "utf8"));   
-        }    
+
+        this.path = "./data/productManager.json"  
+        
+        !fs.existsSync(this.path) ?
+
+            fs.writeFileSync(this.path, JSON.stringify(this.productos, null, "\t")) :
+
+            this.productos = JSON.parse(fs.readFileSync(this.path, "utf8"))       
+
     }
 
-    validarProductoExistente(tituloAAgregar){
-        return this.productos.some(producto => producto.title == tituloAAgregar)    
+    validarProductoExistente(tituloAAgregar) {
+
+        return this.productos.some(producto => producto.title == tituloAAgregar)  
+
     }
 
-    addProduct(title, description, price, stock, category, thumbnails ){
-        const getId = ()=> {
+    addProduct( title, description, price, stock, category, thumbnails ) {
+
+        const getId = () => {
+
             let id = this.productos.length + 1
+
             return id
+
         }
+
         let productoAAgregar = {        
             title: title,
             description: description,
@@ -31,65 +42,101 @@ export class productManager{
             status: true,
             id: getId()
         }
+
         function validarPropiedadesVacias(productoAAgregar) {
-            for(let key in productoAAgregar){
-                if (productoAAgregar[key] != thumbnails && (productoAAgregar[key] === null || productoAAgregar[key] === undefined || productoAAgregar[key] === '')){
+
+            for(let key in productoAAgregar) {
+
+                if (productoAAgregar[key] != thumbnails && (productoAAgregar[key] === null || productoAAgregar[key] === undefined || productoAAgregar[key] === '')) {
+
                     return true
+
                 }
-            }return false
-        }
-        if(validarPropiedadesVacias(productoAAgregar)){
-            console.error("debes llenar todos los campos")
-            return
-        }
-        if(this.validarProductoExistente(productoAAgregar.title)){
-            console.log("Producto existente, intente agregar otro")
-            return
-        }else{
-            this.productos.push(productoAAgregar)
-            if(fs.existsSync(this.path)){
-                fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t"))
+
             }
+            
+            return false
+
         }
+
+        if(validarPropiedadesVacias(productoAAgregar)) {
+
+            console.error("debes llenar todos los campos")
+
+            return
+
+        }
+
+        if(this.validarProductoExistente(productoAAgregar.title)) {
+
+            console.log("Producto existente, intente agregar otro")
+
+            return
+
+        }else {
+
+            this.productos.push(productoAAgregar)
+
+            fs.existsSync(this.path) &&
+
+            fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t"))
+
+        }
+
     }
 
-    getProducts(){
+    getProducts() {
+
         let file = JSON.parse(fs.readFileSync(this.path, "utf8"))
+
         return file
+
     }
 
-    getProductById(id){
-        let file = JSON.parse(fs.readFileSync(this.path, "utf8"));    
-        for(let producto of file){    
-            if(producto.id == id){    
+    getProductById(id) {
+
+        let file = JSON.parse(fs.readFileSync(this.path, "utf8"))
+
+        for(let producto of file) {   
+
+            if(producto.id == id) {    
+
                 return producto  
-            }    
-        }    
+
+            }   
+
+        }   
+
         return "Not found"
+
     }
 
-    deleteProduct(id){
+    deleteProduct(id) {
 
-        let indiceAEliminar = this.productos.findIndex((producto) => producto.id == id);
+        let indiceAEliminar = this.productos.findIndex((producto) => producto.id == id)
 
-        if(indiceAEliminar = -1){
-            return "Not found"
-        }
+        indiceAEliminar == -1 ?
 
-        this.productos.splice(indiceAEliminar,1)
+            "Not found" :
 
-        fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t"))
-        
+            this.productos.splice(indiceAEliminar,1)
+
+            fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t"))
+
     }
 
-    updateProduct(id, productoAModificar, campo, modificacion){
+    updateProduct(id, productoAModificar, campo, modificacion) {
 
         productoAModificar[campo] = modificacion
+
         this.deleteProduct(id)
+
         this.productos.push(productoAModificar)
+
         fs.writeFileSync(this.path, JSON.stringify(this.productos,null,"\t"))
-        
+
     }
+    
 }
 
 

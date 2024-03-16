@@ -1,22 +1,11 @@
 [
 	{
-		"title": "producto de prueba 1",
-		"description": "descripcion de producto de prueba 1",
-		"price": "25",
-		"thumbnail": "/imagen.jpg",
-		"id": 1,
-		"stock": "15"
-	},
-	{
 		"title": "producto de prueba 2",
 		"description": "descripcion de producto de prueba 2",
 		"price": "25",
 		"stock": "15",
 		"category": "categoria 1",
-		"thumbnails": [
-			"img1",
-			"img2"
-		],
+		"thumbnails": [],
 		"status": true,
 		"id": 2
 	}

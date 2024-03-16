@@ -5,13 +5,16 @@ const router = Router()
 
 export const PM = new productManager
 
-router.get("/", (req, res)=>{
+router.get("/", (req, res) => {
 
     let products = PM.getProducts()
 
-    if(!req.query){ 
+    if(!req.query){
+
         res.status(200).send(products)
+
         return
+
     }
 
     let { limit } = req.query
@@ -19,86 +22,108 @@ router.get("/", (req, res)=>{
     let productsLimited = products.slice(0, limit)
 
     res.status(200).send(productsLimited)
+
 })
 
-router.get("/:productid", (req, res)=>{
-    
+router.get("/:productid", (req, res) => {
+
     let productId = req.params.productid
-    
+
     let productRequired = PM.getProductById(productId)
 
-    if(productRequired == "Not found"){
-        return res.status(404).send({message: "no existe un producto con ese id"})
-    }
-    
-    res.status(200).send(productRequired)
-    
+    productRequired == "Not found" ?
+
+        res.status(404).send({message: "No existe un producto con ese id"}) :
+
+        res.status(200).send(productRequired)
+
 })
 
-router.post("/", (req, res)=>{
+router.post("/", (req, res) => {
 
-    const {title, description, price, stock, category, thumbnails} = req.body
+    const { title, description, price, stock, category, thumbnails } = req.body
 
-    if( !title || !description || !price || !stock || !category ){
-        return res.status(400).send({message: "faltan campos. intentar nuevamente"})
+    if( !title || !description || !price || !stock || !category ) {
+
+        return res.status(400).send({message: "Faltan campos. Intente nuevamente"})
+
     }
 
-    if(req.body.id){
-        return res.status(400).send({message: "el campo id se creara automaticamente. intentelo de nuevo sin incluir este campo"})
+    if(req.body.id) {
+
+        return res.status(400).send({message: "El campo ID se creara automaticamente. Intentelo de nuevo sin incluir este campo"})
+
     }
 
-    if(PM.validarProductoExistente(title)){
-        return res.status(400).send({message: "producto ya existente"})
+    if(PM.validarProductoExistente(title)) {
+
+        return res.status(400).send({message: "Producto ya existente"})
+
     }
 
     PM.addProduct( title, description, price, stock, category, thumbnails )
 
-    res.status(201).send({message: "producto creado correctamente"});
+    res.status(201).send({message: "Producto creado correctamente"});
 
 })
 
-//NO ANDA EL UPDATE PRODUCT: se modifica el producto pero no se sobreescribe MODIFICAR DSP
-// router.put("/:productid", (req, res)=>{
+router.put("/:productid", (req, res) => {
 
-//     const {campo, modificacion} = req.body
+    const {campo, modificacion} = req.body
 
-//     const productId = req.params.productid
+    const productId = req.params.productid
 
-//     const productoAModificar = PM.getProductById(productId)
+    const productoAModificar = PM.getProductById(productId)
 
-//     if(productoAModificar == "Not found"){
-//         return res.status(404).send({message: "no existe un producto con ese id"})
-//     }
+    if(productoAModificar == "Not found") {
 
-//     if(campo == "id"){
-//         return res.status(404).send({message: "No se puede modificar ese campo del producto. Elija otro"})
-//     }
+        return res.status(404).send({message: "No existe un producto con ese id"})
 
-//     if(!campo || !modificacion ){
-//         return res.status(400).send({message: "Debes definir al menos un campo y su modificacion"})
-//     }
+    }
 
-//     PM.updateProduct(productId, productoAModificar, campo, modificacion)
+    if(campo == "id") {
 
-//     res.status(200).send({message: "producto modificado correctamente"})
+        return res.status(404).send({message: "No se puede modificar ese campo del producto. Elija otro"})
 
-// })
+    }
 
-//no funciona modoficar dsp
-// router.delete("/:productid", (req, res)=>{
+    if(!campo || !modificacion ) {
 
-//     const productId = req.params.productid
-//     const productRequired = PM.getProductById(productId)
+        return res.status(400).send({message: "Debes definir un campo y su modificacion"})
 
-//     if (productRequired == "Not found"){
+    }
 
-//         return res.status(404).send({message: "No existe un producto con ese id"})
+    if(campo in productoAModificar){
+    
+        PM.updateProduct(productId, productoAModificar, campo, modificacion)
 
-//     }
+        res.status(200).send({message: "Producto modificado correctamente"})
 
-//     PM.deleteProduct(productRequired)
-//     res.status(200).send({message: "Producto eliminado correctamente"})
+    }else {
 
-// })
+        res.status(404).send({message: "No existe ese campo. Ingrese uno diferente"})
+
+    }
+
+})
+
+
+router.delete("/:productid", (req, res) => {
+
+    const productId = req.params.productid
+
+    const productRequired = PM.getProductById(productId)
+
+    if(productRequired == "Not found") {
+
+        return res.status(404).send({message: "No existe un producto con ese id"})
+
+    }
+
+    PM.deleteProduct(productId)
+
+    res.status(200).send({message: "Producto eliminado correctamente"})
+
+})
 
 export default router
