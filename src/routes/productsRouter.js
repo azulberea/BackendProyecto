@@ -1,37 +1,68 @@
 import { Router } from "express";
-import { productManager } from "../productManager.js"
+import { PMDB } from "../dao/Dao/productManagerDB.js";
+import { productModel } from "../dao/models/productModel.js";
 
 const router = Router()
 
-export const PM = new productManager
+router.get("/", async (req, res) => {
 
-router.get("/", (req, res) => {
+    let { limit, page, sort, category, status } = req.query
 
-    let products = PM.getProducts()
+    let sortOptions
+    let sortOrder 
 
-    if(!req.query){
+    try{
+        if(sort == "asc"){
+                sortOrder = 1
+                sortOptions = {price:1}
+            }else if(sort == "desc"){
+                sortOrder = -1
+                sortOptions={price:-1}
+            }else{
+                sortOptions = {}
+        }
 
-        res.status(200).send(products)
+        let filter  
+    
+        if(category){
+            filter = {category:category}
+        }else if(status){
+            filter = {status:status}
+        }else{
+            filter = {}
+        }
 
-        return
+        let products = await productModel.paginate(filter,{limit:limit ? limit : 10, page:page ? page : 1, sort: sortOptions})
+
+        res.status(200).send({status:"success",
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.hasPrevPage ? `http://localhost:8080/api/products?page=${products.prevPage}` : null,
+            nextLink: products.hasNextPage ? `http://localhost:8080/api/products?page=${products.nextPage}` : null
+        })
+
+    } catch(error){
+
+        res.status(400).send({
+            status: "error",
+            error: error.message
+        })
 
     }
-
-    let { limit } = req.query
-
-    let productsLimited = products.slice(0, limit)
-
-    res.status(200).send(productsLimited)
-
 })
 
-router.get("/:productid", (req, res) => {
+router.get("/:productid", async (req, res) => {
 
     let productId = req.params.productid
 
-    let productRequired = PM.getProductById(productId)
+    let productRequired = await PMDB.getProductById(productId)
 
-    productRequired == "Not found" ?
+    !productRequired ?
 
         res.status(404).send({message: "No existe un producto con ese id"}) :
 
@@ -39,90 +70,55 @@ router.get("/:productid", (req, res) => {
 
 })
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
 
-    const { title, description, price, stock, category, thumbnails } = req.body
+    const { title, description, price, stock, category, status, thumbnails } = req.body
 
-    if( !title || !description || !price || !stock || !category ) {
+    const addedProduct = await PMDB.addProduct( title, description, price, stock, category, status, thumbnails )
 
-        return res.status(400).send({message: "Faltan campos. Intente nuevamente"})
+    if(!addedProduct){
 
-    }
+        return res.status(400).send({
+            message:"Hubo un error al crear el producto. Asegurate de haber completado todos los campos y que el producto no exista en la base de datos"
 
-    if(req.body.id) {
-
-        return res.status(400).send({message: "El campo ID se creara automaticamente. Intentelo de nuevo sin incluir este campo"})
-
-    }
-
-    if(PM.validarProductoExistente(title)) {
-
-        return res.status(400).send({message: "Producto ya existente"})
+        })
 
     }
 
-    PM.addProduct( title, description, price, stock, category, thumbnails )
-
-    res.status(201).send({message: "Producto creado correctamente"});
+        return res.status(201).send({message: "Producto creado correctamente"});
 
 })
 
-router.put("/:productid", (req, res) => {
+router.put("/:productid", async (req, res) => {
 
-    const {campo, modificacion} = req.body
+    const updatedProduct = await PMDB.updateProduct(req.params.productid,req.body)
 
-    const productId = req.params.productid
-
-    const productoAModificar = PM.getProductById(productId)
-
-    if(productoAModificar == "Not found") {
-
-        return res.status(404).send({message: "No existe un producto con ese id"})
+    if(!updatedProduct){
+        
+        return res.status(400).send({message:"Hubo un error modificando el producto. Asegurate de que el ID del producto y el campo a modificar existan y que la modificacion posea un valor valido"})
 
     }
 
-    if(campo == "id") {
-
-        return res.status(404).send({message: "No se puede modificar ese campo del producto. Elija otro"})
-
-    }
-
-    if(!campo || !modificacion ) {
-
-        return res.status(400).send({message: "Debes definir un campo y su modificacion"})
-
-    }
-
-    if(campo in productoAModificar){
-    
-        PM.updateProduct(productId, productoAModificar, campo, modificacion)
-
-        res.status(200).send({message: "Producto modificado correctamente"})
-
-    }else {
-
-        res.status(404).send({message: "No existe ese campo. Ingrese uno diferente"})
-
-    }
+    return res.status(200).send({
+        message:"El producto ha sido modificado correctamente"
+    })
 
 })
 
-
-router.delete("/:productid", (req, res) => {
+router.delete("/:productid", async (req, res) => {
 
     const productId = req.params.productid
 
-    const productRequired = PM.getProductById(productId)
+    const deletedProduct = await PMDB.deleteProduct(productId)
 
-    if(productRequired == "Not found") {
+    if(!deletedProduct){
 
-        return res.status(404).send({message: "No existe un producto con ese id"})
-
+        return res.status(400).send({
+            message:"Hubo un error al intentar eliminar el producto. Asegurate de que el ID proporcionado coincida con el de un producto existente"
+        })
     }
 
-    PM.deleteProduct(productId)
-
-    res.status(200).send({message: "Producto eliminado correctamente"})
+    return res.status(200).send({message: "Producto eliminado correctamente"})
 
 })
 

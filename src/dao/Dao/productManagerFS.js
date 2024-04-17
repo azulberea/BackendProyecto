@@ -1,12 +1,12 @@
 import fs from "fs" 
 
-export class productManager {
+export class productManagerFS {
     
     constructor() {
 
         this.productos = []    
 
-        this.path = "./data/productManager.json"  
+        this.path = "./data/productManagerFS.json"  
         
         !fs.existsSync(this.path) ?
 
@@ -22,15 +22,9 @@ export class productManager {
 
     }
 
-    addProduct( title, description, price, stock, category, thumbnails ) {
+    addProduct( title, description, price, stock, category, status, thumbnails ) {
 
-        const getId = () => {
-
-            let id = this.productos.length + 1
-
-            return id
-
-        }
+        const uniqueID = Date.now()
 
         let productoAAgregar = {        
             title: title,
@@ -39,8 +33,8 @@ export class productManager {
             stock: stock,
             category: category,
             thumbnails: thumbnails ? thumbnails : [],
-            status: true,
-            id: getId()
+            status: status ? status : true,
+            id: uniqueID
         }
 
         function validarPropiedadesVacias(productoAAgregar) {
@@ -63,15 +57,15 @@ export class productManager {
 
             console.error("debes llenar todos los campos")
 
-            return
+            return "emptyProperties"
 
         }
 
         if(this.validarProductoExistente(productoAAgregar.title)) {
 
-            console.log("Producto existente, intente agregar otro")
+            console.error("Producto existente, intente agregar otro")
 
-            return
+            return "existingProduct"
 
         }else {
 
@@ -139,28 +133,4 @@ export class productManager {
     
 }
 
-
-// TESTING:
-
-// let instancia1 = new productManager
-
-// console.log(instancia1.getProducts())
-
-// instancia1.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", 25)
-// instancia1.addProduct("producto prueba 2", "Este es un producto prueba", 200, "Sin imagen", 25)
-// instancia1.addProduct("producto prueba 3", "Este es un producto prueba", 200, "Sin imagen", 25)
-// instancia1.addProduct("azul", "Este es un producto prueba", 200, "Sin imagen", 25)
-// instancia1.addProduct("azul", "Este es un producto prueba", 200, "Sin imagen", 25)
-
-
-// console.log(instancia1.getProducts())
-
-//  console.log(instancia1.getProductById(1))
-// console.log(instancia1.getProductById(6))
-
-// instancia1.updateProduct(1, "title", "cambio de titulo")
-// instancia1.updateProduct(1, "id", 89)
-
-// instancia1.deleteProduct(1)
-// instancia1.deleteProduct(2)
-// instancia1.deleteProduct(999)
+export const PMFS = new productManagerFS

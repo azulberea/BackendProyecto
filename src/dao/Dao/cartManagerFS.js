@@ -1,5 +1,5 @@
 import fs from "fs"
-import { PM } from "./routes/productsRouter.js"
+import { PMFS } from "./productManagerFS.js"
 
 export class cartManager {
 
@@ -78,7 +78,7 @@ export class cartManager {
 
         const cartRequired = this.carts.find(cart => cart.id == cartId)
 
-        const productRequired = PM.productos.find(product => product.id == productId)
+        const productRequired = PMFS.productos.find(product => product.id == productId)
 
         return cartRequired.products.some(product => product.id == productRequired.id)
 
@@ -88,7 +88,7 @@ export class cartManager {
 
         const cartRequired = this.carts.find(cart => cart.id == cartId)
 
-        const productRequired = PM.productos.find(product => product.id == productId)
+        const productRequired = PMFS.productos.find(product => product.id == productId)
 
         if(!cartRequired || !productRequired){
 
