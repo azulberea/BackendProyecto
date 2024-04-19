@@ -48,7 +48,7 @@ export class productManagerDB {
 
     async getProducts() {  
         try{
-            const result = await productModel.find().lean()
+            const result = await productModel.find()
             return result
         } 
         catch(error){
