@@ -8,15 +8,12 @@ router.get("/", async (req, res) => {
 
     let { limit, page, sort, category, status } = req.query
 
-    let sortOptions
-    let sortOrder 
+    let sortOptions 
 
     try{
         if(sort == "asc"){
-                sortOrder = 1
                 sortOptions = {price:1}
             }else if(sort == "desc"){
-                sortOrder = -1
                 sortOptions={price:-1}
             }else{
                 sortOptions = {}
@@ -60,48 +57,75 @@ router.get("/:productid", async (req, res) => {
 
     let productId = req.params.productid
 
-    let productRequired = await PMDB.getProductById(productId)
+    try{
 
-    !productRequired ?
+        let productRequired = await PMDB.getProductById(productId)
 
-        res.status(404).send({message: "No existe un producto con ese id"}) :
+        !productRequired ?
 
-        res.status(200).send(productRequired)
+            res.status(404).send({message: "No existe un producto con ese id"}) :
+
+            res.status(200).send(productRequired)
+
+    }catch(error){
+
+        console.error(error.message)
+
+    }
 
 })
 
 router.post("/", async (req, res) => {
-
+    
     const { title, description, price, stock, category, status, thumbnails } = req.body
+    
+    try{
 
-    const addedProduct = await PMDB.addProduct( title, description, price, stock, category, status, thumbnails )
+        const addedProduct = await PMDB.addProduct( title, description, price, stock, category, status, thumbnails )
 
-    if(!addedProduct){
+        if(!addedProduct){
 
-        return res.status(400).send({
-            message:"Hubo un error al crear el producto. Asegurate de haber completado todos los campos y que el producto no exista en la base de datos"
+            return res.status(400).send({
 
-        })
+                message:"Hubo un error al crear el producto. Asegurate de haber completado todos los campos y que el producto no exista en la base de datos"
+
+            })
+
+        }
+
+        return res.status(201).send({message: "Producto creado correctamente"})
+
+    }catch(error){
+        
+        console.error(error.message)
 
     }
-
-        return res.status(201).send({message: "Producto creado correctamente"});
 
 })
 
 router.put("/:productid", async (req, res) => {
 
-    const updatedProduct = await PMDB.updateProduct(req.params.productid,req.body)
+    try{
 
-    if(!updatedProduct){
-        
-        return res.status(400).send({message:"Hubo un error modificando el producto. Asegurate de que el ID del producto y el campo a modificar existan y que la modificacion posea un valor valido"})
+        const updatedProduct = await PMDB.updateProduct(req.params.productid,req.body)
+
+        if(!updatedProduct){
+            
+            return res.status(400).send({message:"Hubo un error modificando el producto. Asegurate de que el ID del producto y el campo a modificar existan y que la modificacion posea un valor valido"})
+
+        }
+
+        return res.status(200).send({
+            message:"El producto ha sido modificado correctamente"
+        })
+
+    }catch(error){
+
+        console.error(error.message)
 
     }
 
-    return res.status(200).send({
-        message:"El producto ha sido modificado correctamente"
-    })
+    
 
 })
 
@@ -109,17 +133,24 @@ router.delete("/:productid", async (req, res) => {
 
     const productId = req.params.productid
 
-    const deletedProduct = await PMDB.deleteProduct(productId)
+    try{
 
-    if(!deletedProduct){
+        const deletedProduct = await PMDB.deleteProduct(productId)
 
-        return res.status(400).send({
-            message:"Hubo un error al intentar eliminar el producto. Asegurate de que el ID proporcionado coincida con el de un producto existente"
-        })
+        if(!deletedProduct){
+
+            return res.status(400).send({
+                message:"Hubo un error al intentar eliminar el producto. Asegurate de que el ID proporcionado coincida con el de un producto existente"
+            })
+        }
+
+        return res.status(200).send({message: "Producto eliminado correctamente"})
+
+    }catch(error){
+
+        console.error(error.message)
+
     }
-
-    return res.status(200).send({message: "Producto eliminado correctamente"})
-
 })
 
 export default router

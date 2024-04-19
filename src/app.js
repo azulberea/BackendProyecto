@@ -8,6 +8,7 @@ import cartsRouter from "./routes/cartsRouter.js"
 import viewsRouter from "./routes/viewsRouter.js"
 import __dirname from "./utils.js"
 import { PMDB } from "./dao/Dao/productManagerDB.js"
+import { CMDB } from "./dao/Dao/cartManagerDB.js"
 
 const app = express()
 
@@ -32,10 +33,15 @@ app.use("/api/carts", cartsRouter)
 app.use("/", viewsRouter)
 
 const connection = async () => {
+
     try{
+
         await mongoose.connect("mongodb+srv://444zul:qweqweasd123123@cluster0.yaz7f4a.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0")
+    
     }catch(error){
+
         console.error(error)
+
     }
 }
 
@@ -48,29 +54,85 @@ socketServer.on("connection", socket => {
     
     socket.on("addProduct", async (data) => {
 
-        const result = await PMDB.addProduct(...data)
+        try{
 
-        if(!result){
-            
-            socket.emit("errorOnCreation", "Hubo un error al crear el producto. Asegurate de haber llenado todos los campos con datos validos y que el producto no exista en la base de datos")
+            const result = await PMDB.addProduct(...data)
 
-            return
+            if(!result){
+                        
+                socket.emit("errorOnCreation", "Hubo un error al crear el producto. Asegurate de haber llenado todos los campos con datos válidos y que el producto no exista en la base de datos")
+
+                return
+
+            }
+
+            const products = await PMDB.getProducts()
+
+            socket.emit("getProducts", products)
+
+        }catch(error){
+
+            console.error(error.message)
 
         }
 
-        const products = await PMDB.getProducts()
-
-        socket.emit("getProducts", products)
         
     })
 
     socket.on("deleteProduct", async (data) => {
 
-        await PMDB.deleteProduct(data)
+        try{
 
-        const products = await PMDB.getProducts()
+            await PMDB.deleteProduct(data)
 
-        socket.emit("getProducts", products)
+            const products = await PMDB.getProducts()
+
+            socket.emit("getProducts", products)
+
+        }catch(error){
+
+            console.error(error.message)
+
+        }
+
+    })
+
+    socket.on("addToCart", async (data) => {
+
+        const cartId = "6621781387846930f3efb0c2"
+
+        try{
+
+            await CMDB.addProductToCart(data, cartId)
+
+            socket.emit("addedSuccessfully", data)
+
+        }catch(error){
+
+            console.error(error.message)
+
+        }
+
+    })
+
+    socket.on("deleteProductFromCart", async (data) => {
+
+        const cartId = "6621781387846930f3efb0c2"
+
+        try{
+
+            await CMDB.deleteProductFromCart(data, cartId)
+
+            let cart = await CMDB.getAllCartProducts(cartId)
+
+            socket.emit("getProductsFromCart", cart.products)
+
+        }catch(error){
+
+            console.error(error.message)
+
+        }
+
     })
 
 })

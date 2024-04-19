@@ -106,6 +106,10 @@
   --font-color: #fefefe;
   align-self: center;
 }
+
+.carrito-vacio{
+  display: flex;
+}
 /* 
 .card .title {
   font-family: Arial, Helvetica, sans-serif;

@@ -95,20 +95,18 @@ export class cartManagerDB {
 
     }
     
-    async getAllCartProducts(cartId) { //FUNCIONA
+    async getAllCartProducts(cartId) { 
 
         try{
 
-            const cart = await cartModel.findOne({_id:cartId}).populate("products.product")
+            const result = await cartModel.findOne({_id:cartId}).populate("products.product").lean()
 
-            if(!cart){
+            if(!result){
 
                 return
 
             }
 
-            const result = cart.products
-            console.log(result)
             return result
 
         }catch(error){

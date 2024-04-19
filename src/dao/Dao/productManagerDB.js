@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import { productModel } from "../models/productModel.js"
+import { paginate } from "mongoose-paginate-v2"
 
 export class productManagerDB {
     
@@ -9,13 +10,13 @@ export class productManagerDB {
             return 
         }
 
+        try {
+            
         const productExisting = await this.getProductByTitle(title)
 
         if(productExisting){
             return
         }
-
-        try {
             const result = await productModel.create({
                 title: title,
                 description: description,
@@ -48,7 +49,7 @@ export class productManagerDB {
 
     async getProducts() {  
         try{
-            const result = await productModel.find()
+            const result = await productModel.find().lean()
             return result
         } 
         catch(error){
@@ -72,32 +73,50 @@ export class productManagerDB {
     }
 
     async updateProduct(id, update) {
-        const productToUpdate = await this.getProductById(id)
 
-        if(!productToUpdate){
-            console.error("no existe un producto con ese id")
-            return
-        }
         try{
+
+            const productToUpdate = await this.getProductById(id)
+
+            if(!productToUpdate){
+
+                return
+
+            }
+
             const result = await productModel.updateOne({_id: id}, update)
+
             return result
+
         }
         catch(error){
+
             console.error(error.message)
+
         }
     }
 
     async deleteProduct(id){
-        const productExists = await this.getProductById(id)
-        if(!productExists){
-            return
-        }
+
         try{
+
+            const productExists = await this.getProductById(id)
+        
+            if(!productExists){
+        
+                return
+        
+            }
+
             const result = productModel.deleteOne({_id: id})
+
             return result
+
         }
         catch(error){
+
             console.error(error.message)
+            
         }
     }
 }
