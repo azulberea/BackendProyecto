@@ -105,7 +105,9 @@ router.get("/products", async (req, res)=>{
         return res.status(200).render("productsWithPaginate", {
 
             style: "styles.css",
-            products: result.docs
+            products: result.docs,
+            previousPage: result.hasPrevPage ? result.prevPage : result.page,
+            nextPage: result.hasNextPage ? result.nextPage : result.page
 
         })
 

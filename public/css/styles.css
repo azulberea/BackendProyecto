@@ -110,6 +110,19 @@
 .carrito-vacio{
   display: flex;
 }
+
+.browse-pages{
+  display: flex;
+  flex-direction: row;
+}
+
+.previous-page{
+  margin: 3em;
+}
+
+.next-page{
+  margin: 3em;
+}
 /* 
 .card .title {
   font-family: Arial, Helvetica, sans-serif;
