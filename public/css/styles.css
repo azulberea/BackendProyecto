@@ -123,6 +123,10 @@
 .next-page{
   margin: 3em;
 }
+
+hr{
+  width: 90vw;
+}
 /* 
 .card .title {
   font-family: Arial, Helvetica, sans-serif;

@@ -37,7 +37,6 @@ export class cartManagerDB {
                 return
             }
 
-            console.log(result)
             return result
 
         }catch(error){
@@ -60,7 +59,6 @@ export class cartManagerDB {
 
             }
 
-            console.log(result)
             return result
         
         }catch(error){
@@ -139,14 +137,12 @@ export class cartManagerDB {
                         
                 result = cartModel.updateOne({_id: cartId, 'products.product': productId},{$inc: { 'products.$.quantity': 1 }})
 
-                console.log(result)
                 return result
 
             }
 
             result = await cartModel.updateOne({_id:cartId}, {$push: {products:{product: productRequired._id, quantity: 1}}})
 
-            console.log(result)
             return result
 
         }catch(error){
@@ -227,7 +223,6 @@ export class cartManagerDB {
 
             }
 
-            console.log(result)
             return result
 
         }catch(error){

@@ -3,48 +3,12 @@ import { Router } from "express";
 import { productModel } from "../dao/models/productModel.js";
 import { CMDB } from "../dao/Dao/cartManagerDB.js";
 import { cartModel } from "../dao/models/cartModel.js";
+import { auth, authLogged } from "../middlewares/auth.js";
 
 const router = Router()
 
-router.get("/", async (req, res) => {
 
-    let { limit } = req.query
-
-    try{
-
-        let products = await PMDB.getProducts()
-        
-        if(!limit){
-
-            res.status(200).render("home", {
-
-                products: products,
-                style: "styles.css"
-
-            })
-
-            return
-
-        }
-
-        let productsLimited = products.slice(0, limit)
-
-        res.status(200).render("home", {
-
-            products: productsLimited,
-            style: "styles.css"       
-
-        })
-
-    }catch(error){
-
-        console.error(error.message)
-
-    }
-    
-})
-
-router.get("/realTimeProducts", async (req, res) => {
+router.get("/realTimeProducts", auth, async (req, res) => {
 
     let { limit } = req.query
 
@@ -82,7 +46,7 @@ router.get("/realTimeProducts", async (req, res) => {
 
 })
 
-router.get("/products", async (req, res)=>{
+router.get("/products", auth, async (req, res)=>{
 
     const { page } = req.query
 
@@ -102,9 +66,10 @@ router.get("/products", async (req, res)=>{
 
         }
 
-        return res.status(200).render("productsWithPaginate", {
+        return res.status(200).render("products", {
 
             style: "styles.css",
+            user: req.session.user,
             products: result.docs,
             previousPage: result.hasPrevPage ? result.prevPage : result.page,
             nextPage: result.hasNextPage ? result.nextPage : result.page
@@ -119,7 +84,7 @@ router.get("/products", async (req, res)=>{
 
 })
 
-router.get("/carts/:cartid", async (req, res)=>{
+router.get("/carts/:cartid", auth, async (req, res)=>{
 
     const cartId = req.params.cartid
 
@@ -142,6 +107,46 @@ router.get("/carts/:cartid", async (req, res)=>{
         }) 
 
     }catch{}
+
+})
+
+router.get("/cookies", auth, (req, res)=>{
+    res.status(200).render("cookies",{
+
+        style: "styles.css"
+
+    })
+})
+
+router.get("/login", authLogged, (req, res)=>{
+
+    res.render("login",{
+        style: "styles.css",
+        failedLogin: req.session.failedLogin ?? false
+    })
+})
+
+router.get("/register", authLogged, (req, res)=>{
+
+    res.render("register",{
+        style: "styles.css",
+        failedRegister: req.session.failedRegister ?? false
+    })
+})
+
+router.get("/", (req, res) => {
+
+    res.render("home", {
+        style: "styles.css"
+    })
+})
+
+router.get("/profile", auth, (req, res)=>{
+
+    res.render("profile",{
+        style: "styles.css",
+        user: req.session.user
+    })
 
 })
 

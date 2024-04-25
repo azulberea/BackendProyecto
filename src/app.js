@@ -2,17 +2,25 @@ import express from "express"
 import handlebars from "express-handlebars"
 import { Server } from "socket.io"
 import mongoose from "mongoose"
+import cookieParser from "cookie-parser"
+import session from "express-session"
+import MongoStore from "connect-mongo"
 
 import productsRouter from "./routes/productsRouter.js"
 import cartsRouter from "./routes/cartsRouter.js"
 import viewsRouter from "./routes/viewsRouter.js"
+import cookiesRouter from "./routes/cookiesRouter.js"
+import sessionsRouter from "./routes/sessionsRouter.js"
 import __dirname from "./utils.js"
 import { PMDB } from "./dao/Dao/productManagerDB.js"
 import { CMDB } from "./dao/Dao/cartManagerDB.js"
 
+
 const app = express()
 
 const PORT = 8080
+
+const uri = "mongodb+srv://444zul:qweqweasd123123@cluster0.yaz7f4a.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0"
 
 const httpServer = app.listen(PORT, () => {
     console.log(`Servidor activo en http://localhost:${PORT}`)
@@ -21,8 +29,22 @@ const httpServer = app.listen(PORT, () => {
 const socketServer = new Server(httpServer);
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: true})); 
 app.use(express.static(`${__dirname}/../public`));
+app.use(cookieParser())
+app.use(session(
+    {
+        store: MongoStore.create(
+            {
+                mongoUrl: uri,
+                ttl: 300
+            }
+        ),
+        secret: "secretPhrase",
+        resave: true,
+        saveUninitialized: true
+    }
+))
 
 app.engine("handlebars", handlebars.engine())
 app.set("views", `${__dirname}/views`)
@@ -30,13 +52,16 @@ app.set("view engine", "handlebars")
 
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartsRouter)
+app.use("/api/sessions", sessionsRouter)
 app.use("/", viewsRouter)
+app.use("/cookies", cookiesRouter)
+
 
 const connection = async () => {
 
     try{
 
-        await mongoose.connect("mongodb+srv://444zul:qweqweasd123123@cluster0.yaz7f4a.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0")
+        await mongoose.connect(uri)
     
     }catch(error){
 
