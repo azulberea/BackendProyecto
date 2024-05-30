@@ -5,6 +5,7 @@ import mongoose from "mongoose"
 import cookieParser from "cookie-parser"
 import session from "express-session"
 import MongoStore from "connect-mongo"
+import passport from "passport"
 
 import productsRouter from "./routes/productsRouter.js"
 import cartsRouter from "./routes/cartsRouter.js"
@@ -14,16 +15,15 @@ import sessionsRouter from "./routes/sessionsRouter.js"
 import __dirname from "./utils.js"
 import { PMDB } from "./dao/Dao/productManagerDB.js"
 import { CMDB } from "./dao/Dao/cartManagerDB.js"
+import initializatePassport from "./config/passportConfig.js"
+import config from "./config/config.js"
 
+const { port, mongoUrl } = config
 
-const app = express()
+const app = express() 
 
-const PORT = 8080
-
-const uri = "mongodb+srv://444zul:qweqweasd123123@cluster0.yaz7f4a.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0"
-
-const httpServer = app.listen(PORT, () => {
-    console.log(`Servidor activo en http://localhost:${PORT}`)
+const httpServer = app.listen(port, () => {
+    console.log(`Servidor activo en http://localhost:${port}`)
 })
 
 const socketServer = new Server(httpServer);
@@ -36,7 +36,7 @@ app.use(session(
     {
         store: MongoStore.create(
             {
-                mongoUrl: uri,
+                mongoUrl: mongoUrl,
                 ttl: 300
             }
         ),
@@ -45,6 +45,10 @@ app.use(session(
         saveUninitialized: true
     }
 ))
+
+initializatePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.engine("handlebars", handlebars.engine())
 app.set("views", `${__dirname}/views`)
@@ -61,7 +65,7 @@ const connection = async () => {
 
     try{
 
-        await mongoose.connect(uri)
+        await mongoose.connect(mongoUrl)
     
     }catch(error){
 

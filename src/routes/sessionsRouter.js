@@ -1,72 +1,104 @@
 import { Router } from "express";
 import userModel from "../dao/models/userModel.js"
+import { isValidPassword, createHash } from "../functionUtils.js";
+import passport from "passport";
+import local from "passport-local"
 
 const router = Router()
 
-router.post("/register", async (req, res)=> {
+const localStrategy = local.Strategy
+
+router.post("/register",
+    passport.authenticate("register", {failureRedirect: "/api/sessions/failedRegister"}),    
+    async (req, res)=> {
     try{
 
         req.session.failedRegister = false
 
-        const user = req.body
-
-        await userModel.create(req.body)
-
-        res.redirect("/login")
+        return res.redirect("/login")
         
-        delete user.password
-
-        req.session.user = user
-        
-        console.log(user)
-        
-    }catch(error){
+    }catch(error) {
 
         req.session.failedRegister = true
 
-        return res.redirect("/register")
+        console.log(error)
 
+        return res.redirect("/register")
+         //DSP CAMBIARLO YA Q SI FALLA SE REDIRECCIONA DESDE EL MIDDLEWARE
     }
+    
 })
 
-router.post("/login", async (req, res)=> {
+router.get("/failedRegister", async (req, res) => {
+
+    try {
+
+        return res.status(400).send({
+            status: "error",
+            message: "Failed register"
+        })
+
+    }catch(error) {
+
+        return res.status(400).send({
+            status: "error",
+            message: error.message
+        })
+
+    }
+
+})
+
+router.post("/login",
+    passport.authenticate("login", {failureRedirect: "/api/sessions/failedLogin"}),
+    async (req, res) => {
 
     try{
 
-        req.session.failedLogin = false
-        
-        const { email, password } = req.body
-
-        const result = await userModel.findOne({email:email})
-
-        if(!result){
-            req.session.failedLogin = true
-            return res.redirect("/login")
+        if(!req.user) {
+            return res.status(401).send({
+                status: "error",
+                message: "login error"
+            })
         }
 
-        if(password !== result.password){
-            req.session.failedLogin = true
-            return res.redirect("/login")
+        req.session.user = {
+            first_name: req.user.first_name,
+            last_name: req.user.last_name,
+            email: req.user.email,
+            age: req.user.age
         }
 
-        delete result.password
+        return res.redirect("/profile")
 
-        if(email == "adminCoder@coder.com"){
-            result.role = "admin"
-        }else{
-            result.role = "user"
-        }
+    }catch(error) {
 
-        console.log(result)
-
-        req.session.user = result
-        return res.redirect("/products")
-
-    }catch(error){
-
-        console.log(error)
+        return res.status(400).send({
+            status: "error",
+            message: error.message
+        })
         
     }
+})
+
+router.get("/failedLogin", async (req, res) => {
+
+    try {
+
+        return res.status(400).send({
+            status: "error",
+            message: "failed login"
+        })
+
+    }catch(error) {
+
+        return res.send({
+            status: "error",
+            message: error.message
+        })
+
+    }
+
 })
 
 router.post("/logout", (req, res)=>{

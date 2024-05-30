@@ -3,12 +3,12 @@ import { Router } from "express";
 import { productModel } from "../dao/models/productModel.js";
 import { CMDB } from "../dao/Dao/cartManagerDB.js";
 import { cartModel } from "../dao/models/cartModel.js";
-import { auth, authLogged } from "../middlewares/auth.js";
+import { auth, authAdmin, authLogged } from "../middlewares/auth.js";
 
 const router = Router()
 
 
-router.get("/realTimeProducts", auth, async (req, res) => {
+router.get("/realTimeProducts", auth, authAdmin, async (req, res) => {
 
     let { limit } = req.query
 

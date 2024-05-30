@@ -7,12 +7,10 @@ const userSchema = mongoose.Schema({
     first_name:{
         type: String,
         require: true,
-        minlength: 3
     },
     last_name:{
         type: String,
         require: true,
-        minlength: 3
     },
     email:{
         type: String,
@@ -23,19 +21,12 @@ const userSchema = mongoose.Schema({
     age:{
         type: Number,
         require: true,
-        minlength: 2
     },
     password:{
         type: String,
         require: true,
         minlength: 3
-    },
-    isAdmin:{
-        type: Boolean,
-        require: true,
-        default: false
     }
-
 })
 
 const userModel = mongoose.model(usersCollection, userSchema)

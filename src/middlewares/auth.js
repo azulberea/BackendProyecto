@@ -21,3 +21,14 @@ export const authLogged = (req, res, next)=>{
     return next()
     
 }
+
+export const authAdmin = (req, res, next)=>{
+
+    if(req.session.user.role == "user"){
+
+        return res.redirect("/products")
+
+    }
+
+    return next()
+}
