@@ -19,19 +19,19 @@ export class ProductController {
 
             if(result.docs.length == 0){
 
-                console.log(`-PMDB no existen productos para mostrar`)
+                //console.log(`-PMDB no existen productos para mostrar`)
 
                 return
 
             }
 
-            console.log(`-PMDB productos paginados exitosamente ${typeof(result)}`)
+            //console.log(`-PMDB productos paginados exitosamente ${typeof(result)}`)
 
             return result
 
         }catch(error) {
 
-            return console.log(`PMDB CATCH hubo un error al paginar los productos: ${error.message}`)
+            return //console.log(`PMDB CATCH hubo un error al paginar los productos: ${error.message}`)
 
         }
     }
@@ -40,7 +40,7 @@ export class ProductController {
 
         if( !title || !description || !price || !stock || !category ){
 
-            console.log(`-PMDB asegurate de completar todos los campos`)
+            //console.log(`-PMDB asegurate de completar todos los campos`)
 
             return 
 
@@ -52,7 +52,7 @@ export class ProductController {
 
             if(productExisting){
 
-                console.log(`-PMDB el producto que estas intentando agregar ya existe`)
+                //console.log(`-PMDB el producto que estas intentando agregar ya existe`)
 
                 return
 
@@ -68,14 +68,14 @@ export class ProductController {
                 thumbnails: thumbnails
             })
                 
-            console.log(`-PMDB producto creado correctamente ${result}`)
+            //console.log(`-PMDB producto creado correctamente ${result}`)
 
             return result
 
         } 
         catch(error) {
 
-            console.log(`-PMDB CATCH hubo un error creando el producto: ${error.message}`)
+            //console.log(`-PMDB CATCH hubo un error creando el producto: ${error.message}`)
 
         }
     }
@@ -88,19 +88,19 @@ export class ProductController {
 
             if(!result){
                 
-                console.log("-PMDB no hay resultado")
+                //console.log("-PMDB no hay resultado")
                 
                 return 
 
             }
 
-            console.log(`-PMDB ${result}`)
+            //console.log(`-PMDB ${result}`)
 
             return result
 
         }catch(error){
 
-            return console.log(`-PMDB CATCH hubo un error obteniendo el producto por su titulo: ${error.message}`)
+            return //console.log(`-PMDB CATCH hubo un error obteniendo el producto por su titulo: ${error.message}`)
 
         }
     }
@@ -113,7 +113,7 @@ export class ProductController {
 
             if(result.length == 0){
 
-                console.log(`-PMDB no hay productos existentes`)
+                //console.log(`-PMDB no hay productos existentes`)
 
                 return
 
@@ -124,7 +124,7 @@ export class ProductController {
         } 
         catch(error){
 
-            return console.log(`-PMDB hubo un error obteniendo todos los productos: ${error.message}`)
+            return //console.log(`-PMDB hubo un error obteniendo todos los productos: ${error.message}`)
 
         }
 
@@ -138,19 +138,19 @@ export class ProductController {
 
             if(!result){
 
-                console.log(`-PMDB no existe un producto con ese id`)
+                //console.log(`-PMDB no existe un producto con ese id`)
 
                 return
 
             }
 
-            console.log(`-PMDB producto obtenido por su ID exitosamente`)
+            //console.log(`-PMDB producto obtenido por su ID exitosamente`)
 
             return result
 
         }catch(error) {
 
-            console.log(`-PMDB CATCH hubo un error obteniendo el producto  por su ID: ${error.message}`)
+            //console.log(`-PMDB CATCH hubo un error obteniendo el producto  por su ID: ${error.message}`)
 
         }
 
@@ -164,7 +164,7 @@ export class ProductController {
 
             if(!result.acknowledged){
 
-                console.log(`-PMDB no hubo modificaciones porque la modificacion es invalida`)
+                //console.log(`-PMDB no hubo modificaciones porque la modificacion es invalida`)
 
                 return
                 
@@ -172,7 +172,7 @@ export class ProductController {
 
             if(result.matchedCount < 1){
 
-                console.log(`-PMDB no hubo modificaciones porque no existe un producto con ese ID`)
+                //console.log(`-PMDB no hubo modificaciones porque no existe un producto con ese ID`)
 
                 return 
 
@@ -183,7 +183,7 @@ export class ProductController {
         }
         catch(error){
 
-            console.log(`-PMDB CATCH hubo un error actualizando el producto`)
+            //console.log(`-PMDB CATCH hubo un error actualizando el producto`)
 
         }
     }
@@ -196,7 +196,7 @@ export class ProductController {
 
             if(!result.acknowledged){
 
-                console.log(`-PMDB no se elimino ningun producto. intentelo de nuevo`)
+                //console.log(`-PMDB no se elimino ningun producto. intentelo de nuevo`)
 
                 return
 
@@ -204,7 +204,7 @@ export class ProductController {
 
             if(result.deletedCount < 1){
 
-                console.log(`-PMDB no se pudo eliminar el producto, asegurate de que el producto a eliminar exista`)
+                //console.log(`-PMDB no se pudo eliminar el producto, asegurate de que el producto a eliminar exista`)
 
                 return
 
@@ -215,7 +215,7 @@ export class ProductController {
         }
         catch(error){
 
-            console.log(`PMDB CATCH hubo un error eliminando el producto`)
+            //console.log(`PMDB CATCH hubo un error eliminando el producto`)
             
         }
 

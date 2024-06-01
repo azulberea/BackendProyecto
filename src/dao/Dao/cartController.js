@@ -16,13 +16,13 @@ export class CartController{
 
             const result = await this.cartService.add()
 
-            console.log(`-CARTCONTROLLER carrito creado correctamente`)
+            //console.log(`-CARTCONTROLLER carrito creado correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al crear el carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al crear el carrito: ${error.message}`)
 
             return
 
@@ -38,19 +38,19 @@ export class CartController{
 
             if(!result){
 
-                console.log(`-CARTCONTROLLER hubo un error obteniendo todos los carritos`)
+                //console.log(`-CARTCONTROLLER hubo un error obteniendo todos los carritos`)
 
                 return
 
             }
 
-            console.log(`-CARTCONTROLLER carritos obtenidos correctamente: ${result }`)
+            //console.log(`-CARTCONTROLLER carritos obtenidos correctamente: ${result }`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al obteneer los carritos: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al obteneer los carritos: ${error.message}`)
 
             return
 
@@ -66,19 +66,19 @@ export class CartController{
 
             if(!result){
 
-                console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
+                //console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
 
                 return
 
             }
 
-            console.log(`-CARTCONTROLLER carrito obtenido correctamente ${result}`)
+            //console.log(`-CARTCONTROLLER carrito obtenido correctamente ${result}`)
 
             return result
         
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al obtener el carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al obtener el carrito: ${error.message}`)
 
             return
 
@@ -94,7 +94,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                console.log(`-CARTCONTROLLER no existe un carrito con ese id`)
+                //console.log(`-CARTCONTROLLER no existe un carrito con ese id`)
 
                 return
 
@@ -104,19 +104,19 @@ export class CartController{
 
             if(!result){
 
-                console.log(`-CARTCONTROLLER no existe un producto con ese ID en el carrito`)
+                //console.log(`-CARTCONTROLLER no existe un producto con ese ID en el carrito`)
 
                 return
 
             }
 
-            console.log(`-CARTCONTROLLER producto obtenido del carrito exitosamente ${result}`)
+            //console.log(`-CARTCONTROLLER producto obtenido del carrito exitosamente ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error obteniendo el producto del carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error obteniendo el producto del carrito: ${error.message}`)
 
             return 
 
@@ -129,22 +129,22 @@ export class CartController{
         try{
 
             const result = await this.cartService.getAllProducts(cartId)
-            
+
             if(result.products.length == 0){    
 
-                console.log("-CARTCONTROLLER el carrito esta vacio")
+                //console.log("-CARTCONTROLLER el carrito esta vacio")
 
                 return "empty"
 
             }
 
-            console.log(`-CARTCONTROLLER productos obtenidos del carrito exitosamente ${result}`)
+            //console.log(`-CARTCONTROLLER productos obtenidos del carrito exitosamente ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al obtener los productos del carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al obtener los productos del carrito: ${error.message}`)
 
         }
 
@@ -160,7 +160,7 @@ export class CartController{
 
             if(!cartRequired || !productRequired){
 
-                console.log(`-CARTCONTROLLER hubo un error al agregar el producto al carrito. asegurate de que exista un producto y un carrito con esos ID`)
+                //console.log(`-CARTCONTROLLER hubo un error al agregar el producto al carrito. asegurate de que exista un producto y un carrito con esos ID`)
 
                 return
 
@@ -174,7 +174,7 @@ export class CartController{
                         
                 const result = this.cartService.updateProductQuantity(cartId, productId, quantity++)
                 
-                console.log(`-CARTCONTROLLER se ha incrementado el producto en 1`)
+                //console.log(`-CARTCONTROLLER se ha incrementado el producto en 1`)
 
                 return result
 
@@ -182,13 +182,13 @@ export class CartController{
 
             const result = await this.cartService.addProduct(productId, cartId)
 
-            console.log(`-CARTCONTROLLER producto agregado al carrito correctamente`)
+            //console.log(`-CARTCONTROLLER producto agregado al carrito correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error agregando el prodcuto al carrito o incrementandolo en 1: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error agregando el prodcuto al carrito o incrementandolo en 1: ${error.message}`)
 
             return
 
@@ -204,7 +204,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
+                //console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
 
                 return
 
@@ -214,7 +214,7 @@ export class CartController{
 
             if(!productRequired){
 
-                console.log(`-CARTCONTROLLER este producto no esta en el carrito`)
+                //console.log(`-CARTCONTROLLER este producto no esta en el carrito`)
 
                 return
 
@@ -224,7 +224,7 @@ export class CartController{
 
             if(result.modifiedCount == 0){
 
-                console.log(`-CARTCONTROLLER no se elimino el producto del carrito`)
+                //console.log(`-CARTCONTROLLER no se elimino el producto del carrito`)
                 
                 return
 
@@ -234,7 +234,7 @@ export class CartController{
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al eliminar el producto del carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al eliminar el producto del carrito: ${error.message}`)
 
             return
 
@@ -249,7 +249,7 @@ export class CartController{
 
             if(!validateCart){
 
-                console.log(`-CARTCONTROLLER asegurate de que exista un carrito con ese ID`)
+                //console.log(`-CARTCONTROLLER asegurate de que exista un carrito con ese ID`)
 
                 return 
             
@@ -257,13 +257,13 @@ export class CartController{
 
             const result = await this.cartService.deleteAllProducts(cartId)
 
-            console.log(`-CARTCONTROLLER todos los productos han sido eliminados del carrito`)
+            //console.log(`-CARTCONTROLLER todos los productos han sido eliminados del carrito`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al intentar eliminar todo slos productos del carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al intentar eliminar todo slos productos del carrito: ${error.message}`)
 
             return 
 
@@ -278,7 +278,7 @@ export class CartController{
 
             if(!validateCart){
 
-                console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
+                //console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
 
                 return
 
@@ -288,19 +288,19 @@ export class CartController{
 
             if(result.deletedCount == 0){
 
-                console.log(`-CARTCONTROLLER hubo un error eliminando el carrito`)
+                //console.log(`-CARTCONTROLLER hubo un error eliminando el carrito`)
 
                 return
 
             }
 
-            console.log(`-CARTCONTROLLER carrito eliminado correctamente`)
+            //console.log(`-CARTCONTROLLER carrito eliminado correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al eliminar el carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al eliminar el carrito: ${error.message}`)
 
         }
     }
@@ -313,7 +313,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                console.log("-CARTCONTROLLER carrito inexistwente")
+                //console.log("-CARTCONTROLLER carrito inexistwente")
 
                 return
 
@@ -323,7 +323,7 @@ export class CartController{
 
             if(!productInCart){
 
-                console.log(`-CARTCONTROLLER ese producto no esta en el carrito`)
+                //console.log(`-CARTCONTROLLER ese producto no esta en el carrito`)
 
                 return 
 
@@ -333,19 +333,19 @@ export class CartController{
 
             // if(result.modifiedCount == 0){
 
-            //     console.log(`-CARTCONTROLLER hubo un error modificando el producto`)
+            //     //console.log(`-CARTCONTROLLER hubo un error modificando el producto`)
 
             //     return
 
             // }
 
-            console.log(`-CARTCONTROLLER cantidad modificada correctamente`)
+            //console.log(`-CARTCONTROLLER cantidad modificada correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al modificar la cantidad: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al modificar la cantidad: ${error.message}`)
 
         }
 
@@ -359,7 +359,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                console.log(`-CARTCONTROLLER no se pudieron actualizar los productos ya que no existe un carrito con ese ID`)
+                //console.log(`-CARTCONTROLLER no se pudieron actualizar los productos ya que no existe un carrito con ese ID`)
 
                 return
 
@@ -367,13 +367,13 @@ export class CartController{
 
             const result = this.cartService.updateProducts(cartId, products)
 
-            console.log(`-CARTCONTROLLER productos del carrito actualizados correctamente`)
+            //console.log(`-CARTCONTROLLER productos del carrito actualizados correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTCONTROLLER CATCH hubo un error al actualizar los productos del carrito: ${error.message}`)
+            //console.log(`-CARTCONTROLLER CATCH hubo un error al actualizar los productos del carrito: ${error.message}`)
         }
 
     }

@@ -12,19 +12,19 @@ export default class CartService {
 
             if(!result){
 
-                console.log("-CART SERVICE hubo un error creando el carrito")
+                //console.log("-CART SERVICE hubo un error creando el carrito")
 
                 return
 
             }
 
-            console.log(`-CARTSERVICE carrito creado correctamente`)
+            //console.log(`-CARTSERVICE carrito creado correctamente`)
 
             return result
         
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH error creando carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH error creando carrito: ${error.message}`)
 
             return 
             
@@ -38,13 +38,13 @@ export default class CartService {
 
             const result = await cartModel.find()
 
-            console.log(`-CARTSERVICE carritos obtenidos exitosamente: ${result}`)
+            //console.log(`-CARTSERVICE carritos obtenidos exitosamente: ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH error obteniendo los carritos: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH error obteniendo los carritos: ${error.message}`)
 
             return 
 
@@ -58,13 +58,13 @@ export default class CartService {
 
             const result = await cartModel.findOne({_id:id})
 
-            console.log(`-CARTSERVICE carrito obtenido por ID exitosamente: ${result}`)
+            //console.log(`-CARTSERVICE carrito obtenido por ID exitosamente: ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH error obteniendo carrito por su ID: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH error obteniendo carrito por su ID: ${error.message}`)
 
             return
 
@@ -80,13 +80,13 @@ export default class CartService {
 
             const result = await cartRequired.products.find(product => product.product == productId)
 
-            console.log(`-CARTSERVICE producto obtenido: ${result}`)
+            //console.log(`-CARTSERVICE producto obtenido: ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH error obteniendo producto del carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH error obteniendo producto del carrito: ${error.message}`)
 
             return 
 
@@ -100,13 +100,13 @@ export default class CartService {
 
             const result = await cartModel.findOne({_id:cartId}).populate("products.product")
 
-            console.log(`-CARTSERVICE productos obtenidos del carrito correctamente ${result.products}`)
+            //console.log(`-CARTSERVICE productos obtenidos del carrito correctamente ${result.products}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH hubo un error al obtener todos los productos del carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH hubo un error al obtener todos los productos del carrito: ${error.message}`)
 
             return
 
@@ -120,13 +120,13 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId}, {$push: {products:{product: productId, quantity: 1}}})
 
-            console.log(`-CARTSERVICE producto agregado al carrito correctamente`)
+            //console.log(`-CARTSERVICE producto agregado al carrito correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH hubo un error al agregar el producto al carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH hubo un error al agregar el producto al carrito: ${error.message}`)
 
             return
 
@@ -140,13 +140,13 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId, "products.product": productId},{$pull: { products: {product: productId }}})
 
-            console.log(`-CARTSERVICE producto eliminado del carrito exitosamente ${result}`)
+            //console.log(`-CARTSERVICE producto eliminado del carrito exitosamente ${result}`)
             
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH no se ha podido eliminar el producto del carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH no se ha podido eliminar el producto del carrito: ${error.message}`)
 
             return
 
@@ -159,13 +159,13 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId},{products:[]})
 
-            console.log(`-CARTSERVICE productos eliminados del carrito correctamente ${result}`)
+            //console.log(`-CARTSERVICE productos eliminados del carrito correctamente ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH no se han podido eliminar los productos del carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH no se han podido eliminar los productos del carrito: ${error.message}`)
 
             return
 
@@ -179,13 +179,13 @@ export default class CartService {
 
             const result = await cartModel.deleteOne({_id: id})
 
-            console.log(`-CARTSERVICE carrito eliminado correctamente ${result}`)
+            //console.log(`-CARTSERVICE carrito eliminado correctamente ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH hubo un error al eliminar el carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH hubo un error al eliminar el carrito: ${error.message}`)
 
             return
 
@@ -199,13 +199,13 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId, "products.product": productId},{$set: {"products.$.quantity":quantity} })
 
-            console.log(`-CARTSERVICE cantidad actualizada correctamente`)
+            //console.log(`-CARTSERVICE cantidad actualizada correctamente`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH no se pudo actualizar la cantidad del producto: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH no se pudo actualizar la cantidad del producto: ${error.message}`)
 
             return
 
@@ -219,13 +219,13 @@ export default class CartService {
 
             const result = cartModel.updateOne({_id:cartId},{products:products})
 
-            console.log(`-CARTSERVICE todos los productos del carrito se han actualizado correctamente ${result}`)
+            //console.log(`-CARTSERVICE todos los productos del carrito se han actualizado correctamente ${result}`)
 
             return result
 
         }catch(error){
 
-            console.log(`-CARTSERVICE CATCH no se han podido actualizar todos los productos del carrito: ${error.message}`)
+            //console.log(`-CARTSERVICE CATCH no se han podido actualizar todos los productos del carrito: ${error.message}`)
 
             return
 
