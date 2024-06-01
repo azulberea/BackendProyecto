@@ -13,8 +13,8 @@ import viewsRouter from "./routes/viewsRouter.js"
 import cookiesRouter from "./routes/cookiesRouter.js"
 import sessionsRouter from "./routes/sessionsRouter.js"
 import __dirname from "./utils.js"
-import { PMDB } from "./dao/Dao/productManagerDB.js"
-import { CMDB } from "./dao/Dao/cartManagerDB.js"
+import { productController } from "./dao/Dao/productController.js"
+import { cartController } from "./dao/Dao/cartController.js"
 import initializatePassport from "./config/passportConfig.js"
 import config from "./config/config.js"
 
@@ -85,7 +85,7 @@ socketServer.on("connection", socket => {
 
         try{
 
-            const result = await PMDB.addProduct(...data)
+            const result = await productController.addProduct(...data)
 
             if(!result){
                         
@@ -95,7 +95,7 @@ socketServer.on("connection", socket => {
 
             }
 
-            const products = await PMDB.getProducts()
+            const products = await productController.getProducts()
 
             socket.emit("getProducts", products)
 
@@ -112,9 +112,9 @@ socketServer.on("connection", socket => {
 
         try{
 
-            await PMDB.deleteProduct(data)
+            await productController.deleteProduct(data)
 
-            const products = await PMDB.getProducts()
+            const products = await productController.getProducts()
 
             socket.emit("getProducts", products)
 
@@ -132,7 +132,7 @@ socketServer.on("connection", socket => {
 
         try{
 
-            await CMDB.addProductToCart(data, cartId)
+            await cartController.addProductToCart(data, cartId)
 
             socket.emit("addedSuccessfully", data)
 
@@ -150,9 +150,9 @@ socketServer.on("connection", socket => {
 
         try{
 
-            await CMDB.deleteProductFromCart(data, cartId)
+            await cartController.deleteProductFromCart(data, cartId)
 
-            let cart = await CMDB.getAllCartProducts(cartId)
+            let cart = await cartController.getAllCartProducts(cartId)
 
             socket.emit("getProductsFromCart", cart.products)
 

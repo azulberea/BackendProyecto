@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CMDB } from "../dao/Dao/cartManagerDB.js";
+import { cartController } from "../dao/Dao/cartController.js";
 
 const router = Router()
 
@@ -7,19 +7,27 @@ router.post("/", async (req, res) => {
 
     try{
         
-        const result = await CMDB.createCart()
+        const result = await cartController.createCart()
 
         if(!result){
 
-            return res.status(400).send({message: "Hubo un error al crear el carrito :("})
+            return res.status(500).send({
+                status: "error",
+                message: "Hubo un error al crear el carrito :("
+            })
 
         }
 
-        return res.status(200).send({message: `Carrito creado correctamente: ${result}`})
+        return res.status(201).send({
+            status: "success",
+            message: `Carrito creado correctamente: ${result}`})
 
     }catch(error){
         
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: "Hubo un error al crear el carrito"
+        })
 
     }
 
@@ -33,20 +41,26 @@ router.post("/:cartid/products/:productid", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.addProductToCart(productId, cartId)
+        const result = await cartController.addProductToCart(productId, cartId)
 
         if(!result){
 
-            return res.status(400).send({message:"Hubo un error añadiento el producto al carrito. Asegurate de que existe un carrito y un producto con ese ID"})
+            return res.status(400).send({
+                status: "error",
+                message:"Hubo un error añadiento el producto al carrito. Asegurate de que existe un carrito y un producto con ese ID"})
 
         }
 
-        return res.status(200).send({message:`El producto ${productId} fue añadido correctamente al carrito ${cartId}`})
+        return res.status(200).send({
+            status: "success",
+            message:`El producto ${productId} fue añadido correctamente al carrito ${cartId}`})
 
     }catch(error){
 
-        console.error(error.message)
-
+        return res.status(500).send({
+            status: "error",
+            message: "Hubo un error al agregar el producto al carrito"
+        })
     }
 
 })
@@ -55,19 +69,27 @@ router.get("/", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.getCarts()
+        const result = await cartController.getAllCarts()
 
         if(!result){
 
-            return res.status(400).send({message:"Hubo un error al obtener los carritos"})
+            return res.status(500).send({
+                status: "error",
+                message:"Hubo un error al obtener los carritos"})
 
         }
 
-        return res.status(200).send({carts: result})
+        return res.status(200).send({
+            status: "success",
+            message: `Carritos: ${result}`
+        })
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: "Hubo un error al obtener los carritos"
+        })
 
     }
 
@@ -80,19 +102,37 @@ router.get("/:cartid", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.getAllCartProducts(cartId)
+        const result = await cartController.getAllCartProducts(cartId)
 
         if(!result){
 
-            return res.status(400).send({message: "Hubo un error al obtener el carrito. Asegurate de que existe un carrito con ese ID"})
+            return res.status(500).send({
+                status: "error",
+                message: "Hubo un error al obtener los productos del carrito"
+            })
 
         }
 
-        return res.status(200).send({cart: cartId, products: result})
+        if(result == "empty"){
+
+            return res.status(200).send({
+                status: "success",
+                message: "El carrito esta vacío"
+            })
+
+        }
+
+        return res.status(200).send({
+            status: "success",
+            message: `Productos del carrito ${cartId} obtenidos exitosamente: ${result.products}`
+        })
 
     }catch(error){
         
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: "Hubo un error al obtener los productos del carrito"
+        })
         
     }
 })
@@ -105,20 +145,28 @@ router.delete("/:cartid/products/:productid", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.deleteProductFromCart(productId, cartId)
+        const result = await cartController.deleteProductFromCart(productId, cartId)
 
         if(!result){
 
-            return res.status(400).send({message:"Hubo un error al eliminar el producto del carrito. Asegurese de que exista un carrito y un producto con esos ID"})
+            return res.status(400).send({
+                status: "error",
+                message:"Hubo un error al eliminar el producto del carrito. Asegurese de que exista un carrito y un producto con esos ID"
+            })
 
         }
 
-        return res.status(200).send({message: result})
-
+        return res.status(200).send({
+            status: "success",
+            message: "Producto eliminado del carrito exitosamente"
+        })
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: `Hubo un error al eliminar el producto del carrito: ${error.message}`
+        })
 
     }
 
@@ -130,19 +178,28 @@ router.delete("/:cartid", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.deleteAllProductsFromCart(cartId)
+        const result = await cartController.deleteAllProductsFromCart(cartId)
 
         if(!result){
 
-            return res.status(400).send({message:"Hubo un error al intentar eliminar todos los productos del carrito. Asegurese de que ese ID corresponda a un carrito"})
+            return res.status(400).send({
+                status: "error",
+                message:"Hubo un error al intentar eliminar todos los productos del carrito. Asegurese de que exista un carrito con ese ID"
+            })
 
         }
 
-        return res.status(200).send({message: "Todos los productos han sido eliminados del carrito"})
+        return res.status(200).send({
+            status: "success",
+            message: "Todos los productos han sido eliminados del carrito"
+        })
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: `Hubo un error al eliminar los productos del carrito: ${error.message}`
+        })
 
     }
 
@@ -158,25 +215,41 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.updateProductQuantity(cartId, productId, quantity)
+        const result = await cartController.updateProductQuantity(cartId, productId, quantity)
 
         if(!result){
 
-            return res.status(400).send({message: "Hubo un error al actualizar el producto. Asegurate de que los ID correspondan a un carrito y producto existentes"})
+            return res.status(400).send({
+                status: "error",
+                message: "Hubo un error al actualizar el producto. Asegurate de que los ID correspondan a un carrito y producto existentes"})
 
         }
 
-        return res.status(200).send({message:"Se ha actualizado el carrito correctamente"})
+        if(result.modifiedCount == 0){
+
+            return res.status(500).send({
+                status: "error",
+                message: "Hubo un error al actualizar el producto"
+            })
+
+        }
+
+        return res.status(200).send({
+            status: "success",
+            message:"Se ha actualizado el carrito correctamente"})
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: `Hubo un error al actualizar el producto: ${error.message}`
+        })
 
     }
 
 })
 
-router.put("/:cartid", async (req, res)=>{
+router.put("/:cartid", async (req, res)=>{ //NO FUNCIONA, IGUAL PENSABA ELIMINAR ESTA RUTA PORQUE NO ME PARECE MUY UTIL
 
     const cartId = req.params.cartid
 
@@ -184,19 +257,37 @@ router.put("/:cartid", async (req, res)=>{
 
     try{
 
-        const result = await CMDB.updateCartProducts(cartId, products)
+        const result = await cartController.updateCartProducts(cartId, products)
 
         if(!result){
 
-            return res.status(400).send({message:"Hubo un error al actualizar el carrito. Intentelo de nuevo"})
+            return res.status(400).send({
+                status: "error",
+                message:"Hubo un error al actualizar el carrito. Asegurese de que exista un carrito con ese ID"
+            })
 
         }
 
-        return res.status(200).send({message:"Carrito actualizado correctamente", result: result})
+        if(result.modifiedCount == 0){
+            
+            return res.status(400).send({
+                status: "error",
+                message: "Hubo un error al actualizar el carrito"
+            })
+
+        }
+
+        return res.status(200).send({
+            status: "success",
+            message:`Carrito actualizado correctamente`
+        })
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: `Hubo un error al actualizar los productos del carrito: ${error.message}`
+        })
 
     }
 

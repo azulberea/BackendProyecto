@@ -1,7 +1,7 @@
-import { PMDB } from "../dao/Dao/productManagerDB.js";
+import { productController } from "../dao/Dao/productController.js";
 import { Router } from "express";
 import { productModel } from "../dao/models/productModel.js";
-import { CMDB } from "../dao/Dao/cartManagerDB.js";
+import { cartController } from "../dao/Dao/cartController.js";
 import { cartModel } from "../dao/models/cartModel.js";
 import { auth, authAdmin, authLogged } from "../middlewares/auth.js";
 
@@ -14,22 +14,20 @@ router.get("/realTimeProducts", auth, authAdmin, async (req, res) => {
 
     try{
 
-        let products = await PMDB.getProducts()
+        let result = await productController.getProducts()
 
         if(!limit){
 
-            res.status(200).render("realTimeProducts", {
+            return res.status(200).render("realTimeProducts", {
 
-                products: products,
+                products: result,
                 style: "styles.css"
 
             })
 
-            return
-
         }
 
-        let productsLimited = products.slice(0, limit)
+        let productsLimited = result.slice(0, limit)
 
         res.status(200).render("realTimeProducts", {
 
@@ -58,11 +56,11 @@ router.get("/products", auth, async (req, res)=>{
             lean:true
         }
 
-        const result = await productModel.paginate({}, options)
+        const result = await productController.getProductsPaginated({}, options)
 
         if(!result){
 
-            return res.status(400).render("errorPage",{})
+            return res.status(500).render("errorPage",{})
 
         }
 
@@ -84,14 +82,13 @@ router.get("/products", auth, async (req, res)=>{
 
 })
 
-router.get("/carts/:cartid", auth, async (req, res)=>{
+router.get("/carts/:cartid", auth, async (req, res)=>{ //NO SE COMO HACER PARA QUE LAS CARDS DEL CARRITO MUESTREN LA INFO DE LOS PRODUCTOS
 
     const cartId = req.params.cartid
 
     try{
 
-        const result = await cartModel.findOne({_id:cartId}).populate("products.product").lean()
-        console.log(result.products)
+        const result = await cartController.getCartById("6621781387846930f3efb0c2")
 
         if(!result){
 

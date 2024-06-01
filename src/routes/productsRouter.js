@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PMDB } from "../dao/Dao/productManagerDB.js";
+import { productController } from "../dao/Dao/productController.js";
 import { productModel } from "../dao/models/productModel.js";
 
 const router = Router()
@@ -10,47 +10,69 @@ router.get("/", async (req, res) => {
 
     let sortOptions 
 
-    try{
-        if(sort == "asc"){
-                sortOptions = {price:1}
-            }else if(sort == "desc"){
-                sortOptions={price:-1}
-            }else{
-                sortOptions = {}
-        }
+    if(sort == "asc"){
 
-        let filter  
+        sortOptions = {price:1}
+
+    }else if(sort == "desc") {
+
+        sortOptions={price:-1}
+
+    }else{
+
+        sortOptions = {}
+
+    }
+
+    let filter  
     
-        if(category){
-            filter = {category:category}
-        }else if(status){
-            filter = {status:status}
-        }else{
-            filter = {}
+    if(category) {
+
+        filter = {category:category}
+
+    }else if(status) {
+
+        filter = {status:status}
+
+    }else {
+
+        filter = {}
+            
+    }
+
+    try{
+
+        let result = await productController.getProductsPaginated(filter,{limit:limit ? limit : 10, page:page ? page : 1, sort: sortOptions})
+
+        if(!result){
+
+        return res.status(200).send({
+                status:"success",
+                message:"No existen productos para mostrar"
+            })
         }
 
-        let products = await productModel.paginate(filter,{limit:limit ? limit : 10, page:page ? page : 1, sort: sortOptions})
-
-        res.status(200).send({status:"success",
-            payload: products.docs,
-            totalPages: products.totalPages,
-            prevPage: products.prevPage,
-            nextPage: products.nextPage,
-            page: products.page,
-            hasPrevPage: products.hasPrevPage,
-            hasNextPage: products.hasNextPage,
-            prevLink: products.hasPrevPage ? `http://localhost:8080/api/products?page=${products.prevPage}` : null,
-            nextLink: products.hasNextPage ? `http://localhost:8080/api/products?page=${products.nextPage}` : null
+        return res.status(200).send({status:"success",
+            payload: result.docs,
+            totalPages: result.totalPages,
+            prevPage: result.prevPage,
+            nextPage: result.nextPage,
+            page: result.page,
+            hasPrevPage: result.hasPrevPage,
+            hasNextPage: result.hasNextPage,
+            prevLink: result.hasPrevPage ? `http://localhost:8080/api/products?page=${products.prevPage}` : null,
+            nextLink: result.hasNextPage ? `http://localhost:8080/api/products?page=${products.nextPage}` : null
         })
 
-    } catch(error){
+    }catch(error) {
 
-        res.status(400).send({
+        return res.status(500).send({
             status: "error",
-            error: error.message
+            message: error.message
         })
 
     }
+
 })
 
 router.get("/:productid", async (req, res) => {
@@ -59,17 +81,21 @@ router.get("/:productid", async (req, res) => {
 
     try{
 
-        let productRequired = await PMDB.getProductById(productId)
+        let result = await productController.getProductById(productId)
 
-        !productRequired ?
+        if(!result) {
 
-            res.status(404).send({message: "No existe un producto con ese id"}) :
+            return res.status(404).send({message: "No existe un producto con ese id"})
 
-            res.status(200).send(productRequired)
+        }
+
+        return res.status(200).send({status: "success", result})
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({status:"error",
+            message: error.message
+        })
 
     }
 
@@ -81,14 +107,13 @@ router.post("/", async (req, res) => {
     
     try{
 
-        const addedProduct = await PMDB.addProduct( title, description, price, stock, category, status, thumbnails )
+        const result = await productController.addProduct( title, description, price, stock, category, status, thumbnails )
 
-        if(!addedProduct){
+        if(!result){
 
             return res.status(400).send({
-
+                status:"error",
                 message:"Hubo un error al crear el producto. Asegurate de haber completado todos los campos y que el producto no exista en la base de datos"
-
             })
 
         }
@@ -97,7 +122,10 @@ router.post("/", async (req, res) => {
 
     }catch(error){
         
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message:"Hubo un error creando el producto"
+        })
 
     }
 
@@ -105,27 +133,35 @@ router.post("/", async (req, res) => {
 
 router.put("/:productid", async (req, res) => {
 
+    const productId = req.params.productid
+
+    const update = req.body
+
     try{
 
-        const updatedProduct = await PMDB.updateProduct(req.params.productid,req.body)
+        const result = await productController.updateProduct(productId, update)
 
-        if(!updatedProduct){
+        if(!result){
             
-            return res.status(400).send({message:"Hubo un error modificando el producto. Asegurate de que el ID del producto y el campo a modificar existan y que la modificacion posea un valor valido"})
+            return res.status(400).send({
+                status:"error",
+                message:"Hubo un error modificando el producto. Asegurate de que exista un producto con ese ID y que el campo sea valido"
+            })
 
         }
 
         return res.status(200).send({
-            message:"El producto ha sido modificado correctamente"
+            message:"El producto ha sido modificado correctamente", result
         })
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: error.message
+        })
 
     }
-
-    
 
 })
 
@@ -135,22 +171,56 @@ router.delete("/:productid", async (req, res) => {
 
     try{
 
-        const deletedProduct = await PMDB.deleteProduct(productId)
+        const result = await productController.deleteProduct(productId)
 
-        if(!deletedProduct){
+        if(!result){
 
             return res.status(400).send({
-                message:"Hubo un error al intentar eliminar el producto. Asegurate de que el ID proporcionado coincida con el de un producto existente"
+                status: "error",
+                message: "Hubo un error al intentar eliminar el producto. Asegurate de que el ID proporcionado coincida con el de un producto existente"
             })
+
         }
 
-        return res.status(200).send({message: "Producto eliminado correctamente"})
+        return res.status(200).send({
+            status: "success",
+            message: "Producto eliminado correctamente"
+        })
 
     }catch(error){
 
-        console.error(error.message)
+        return res.status(500).send({
+            status: "error",
+            message: error.message
+        })
 
     }
+})
+
+//PRUEBA OK
+router.get("/title/:title", async (req, res) => {
+
+    const { title } = req.params
+
+    try{
+
+        const result = await productController.getProductByTitle(title)
+
+        if(!result){
+
+            return res.status(400).send("No hay productos con ese nombre")
+        }
+
+        return res.status(200).send(result)
+
+    }catch(e){
+
+        return res.status(404).send({status: "error",
+            message: e.message
+        })
+
+    }
+
 })
 
 export default router
