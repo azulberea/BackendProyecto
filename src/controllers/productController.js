@@ -1,4 +1,5 @@
 import ProductService from "../dao/classes/mongo/productDAOMongo.js"
+import { productModel } from "../dao/models/productModel.js"
 
 export class ProductController {
     
@@ -212,10 +213,29 @@ export class ProductController {
         }
         catch(error){
 
-            //console.log(`PMDB CATCH hubo un error eliminando el producto`)
+            console.log(error.message)
+
+            return null
             
         }
 
+    }
+
+    async refreshStock(id, quantity){
+
+        try{
+
+            const result = await this.updateProduct(id,{ $inc: { stock: -quantity } })
+
+            return result
+
+        }catch(error){
+
+            console.log(error.message)
+
+            return null
+            
+        }
     }
 
 }

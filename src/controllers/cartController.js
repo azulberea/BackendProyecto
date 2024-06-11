@@ -1,4 +1,5 @@
 import CartService from "../dao/classes/mongo/cartDAOMongo.js"
+import { cartModel } from "../dao/models/cartModel.js"
 import { productController } from "./productController.js"
 
 export class CartController{
@@ -157,17 +158,23 @@ export class CartController{
 
             }
 
-            const productInCart = cartRequired.products.find(prod => prod.product == productId)
+            // const productInCart = cartRequired.products.find(prod => prod.product == productId)
 
-            if(productInCart){
+            // if(productInCart){
 
-                let quantity = productInCart.quantity
+            //     let quantity = productInCart.quantity
                         
-                const result = this.cartService.updateProductQuantity(cartId, productId, quantity++)
+            //     const result = this.cartService.updateProductQuantity(cartId, productId, quantity++)
                 
-                //console.log(`-CARTCONTROLLER se ha incrementado el producto en 1`)
+            //     //console.log(`-CARTCONTROLLER se ha incrementado el producto en 1`)
 
-                return result
+            //     return result
+
+            // }
+
+            if(productRequired.stock == 0){
+
+                return null
 
             }
 
@@ -365,6 +372,28 @@ export class CartController{
         }catch(error){
 
             //console.log(`-CARTCONTROLLER CATCH hubo un error al actualizar los productos del carrito: ${error.message}`)
+        }
+
+    }
+
+    async getFinalAmount(cartId) {
+
+        try{
+
+            const cart = cartModel.findById(cartId)
+
+            const products = cart.products
+
+            const result = products.reduce((accu, product) => {
+                return accu + product.price
+            }, 0)
+
+            return result
+
+        }catch(error){
+
+            console.log(error.message)
+
         }
 
     }

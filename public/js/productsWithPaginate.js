@@ -13,6 +13,15 @@ productsDiv.addEventListener("click", (e)=>{
     }
 })
 
+socket.on("unavailableProduct", data=>{
+    Toastify({
+        text: `Stock insuficiente 🥺 (id: ${data})`,
+        gravity: "bottom",
+        position: "right",
+        duration: 3000
+    }).showToast()
+})
+
 socket.on("addedSuccessfully", data =>{
 
     Toastify({

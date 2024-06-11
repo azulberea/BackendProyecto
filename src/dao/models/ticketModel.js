@@ -12,12 +12,19 @@ const ticketSchema = mongoose.Schema({
         type: String,
         require: true,
     },
+    cart:{
+        type: mongoose.Schema.ObjectId,
+        ref: "carts",
+        require: true
+    }
+    ,
     amount:{
         type: Number,
         require: true,
     },
     purchaser:{
         type: String,
+        ref: "users",
         require: true
     }
 

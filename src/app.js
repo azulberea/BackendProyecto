@@ -127,7 +127,13 @@ socketServer.on("connection", socket => {
 
         try{
 
-            await cartController.addProductToCart(data, cartId)
+            const result = await cartController.addProductToCart(data, cartId)
+
+            if(!result){
+
+                return socket.emit("unavailableProduct",data)
+
+            }
 
             socket.emit("addedSuccessfully", data)
 

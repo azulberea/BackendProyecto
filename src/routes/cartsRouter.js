@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { cartController } from "../controllers/cartController.js";
 import ticketModel from "../dao/models/ticketModel.js";
+import moment from "moment";
+import { ticketController } from "../controllers/ticketController.js";
 
 const router = Router()
 
@@ -252,13 +254,17 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
 router.post("/:cartid/purchase", async (req, res) => {
 
+    const cartId = req.params.cartid
+
+    const {purchaser} = req.body
+
     try{
 
-        const ticket = {
-            
-        }
+        const result = await ticketController.addTicket(cartId, purchaser)
 
-        const result = await ticketModel.create(ticket)
+        return res.status(200).send({
+            result
+        })
 
     }catch(error){
 

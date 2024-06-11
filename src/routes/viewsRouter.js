@@ -67,6 +67,7 @@ router.get("/products", auth, async (req, res)=>{
         return res.status(200).render("products", {
 
             style: "styles.css",
+            cartURL: `http://localhost:8080/carts/${user.cart}`,
             user: user,
             products: result.docs,
             previousPage: result.hasPrevPage ? result.prevPage : result.page,
