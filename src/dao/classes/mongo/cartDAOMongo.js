@@ -1,5 +1,5 @@
-import { cartModel } from "../models/cartModel.js";
-import { productController } from "../Dao/productController.js";
+import { cartModel } from "../../models/cartModel.js";
+import { productController } from "../../../controllers/productController.js";
 
 export default class CartService {
 
@@ -98,7 +98,7 @@ export default class CartService {
 
         try{
 
-            const result = await cartModel.findOne({_id:cartId}).populate("products.product")
+            const result = await cartModel.findOne({_id:cartId}).populate("products.product").lean()
 
             //console.log(`-CARTSERVICE productos obtenidos del carrito correctamente ${result.products}`)
 
@@ -113,6 +113,24 @@ export default class CartService {
         }
 
     }
+
+    // async incrementProductByOne (cartId, productId) {
+
+    //     try{
+
+    //         const result = await cartModel.updateOne({_id:cartId}, {$set: {products:{product: productId, quantity: quantity+1}}})
+
+    //         return result
+
+    //     }catch(error) {
+
+    //         console.log(error.message)
+            
+    //         return null
+        
+    //     }
+
+    // }
 
     async addProduct(productId, cartId) { //NOSE SI LA HICE BIEN. IDEA: HACER METODO PARA INCREMENTAR CANTIDAD EN UNO
 

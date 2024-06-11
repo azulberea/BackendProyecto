@@ -1,9 +1,7 @@
-import { productController } from "../dao/Dao/productController.js";
+import { productController } from "../controllers/productController.js";
 import { Router } from "express";
-import { productModel } from "../dao/models/productModel.js";
-import { cartController } from "../dao/Dao/cartController.js";
-import { cartModel } from "../dao/models/cartModel.js";
-import { auth, authAdmin, authLogged } from "../middlewares/auth.js";
+import { cartController } from "../controllers/cartController.js";
+import { auth, authAdmin, authLogged, authUser } from "../middlewares/auth.js";
 
 const router = Router()
 
@@ -48,6 +46,8 @@ router.get("/products", auth, async (req, res)=>{
 
     const { page } = req.query
 
+    const user = req.session.user
+
     try{
 
         const options = {
@@ -67,10 +67,11 @@ router.get("/products", auth, async (req, res)=>{
         return res.status(200).render("products", {
 
             style: "styles.css",
-            user: req.session.user,
+            user: user,
             products: result.docs,
             previousPage: result.hasPrevPage ? result.prevPage : result.page,
-            nextPage: result.hasNextPage ? result.nextPage : result.page
+            nextPage: result.hasNextPage ? result.nextPage : result.page,
+            isAdmin: user.role == "admin" ? true : false
 
         })
 
@@ -82,13 +83,13 @@ router.get("/products", auth, async (req, res)=>{
 
 })
 
-router.get("/carts/:cartid", auth, async (req, res)=>{ //NO SE COMO HACER PARA QUE LAS CARDS DEL CARRITO MUESTREN LA INFO DE LOS PRODUCTOS
+router.get("/carts/:cartid", auth, authUser, async (req, res)=>{
 
     const cartId = req.params.cartid
 
     try{
 
-        const result = await cartController.getCartById("6621781387846930f3efb0c2")
+        const result = await cartController.getAllCartProducts("6621781387846930f3efb0c2")
 
         if(!result){
 

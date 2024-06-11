@@ -1,6 +1,4 @@
 import { Router } from "express";
-import userModel from "../dao/models/userModel.js"
-import { isValidPassword, createHash } from "../functionUtils.js";
 import passport from "passport";
 import local from "passport-local"
 
@@ -66,9 +64,12 @@ router.post("/login",
             first_name: req.user.first_name,
             last_name: req.user.last_name,
             email: req.user.email,
-            age: req.user.age
+            age: req.user.age,
+            role: req.user.role
         }
 
+        console.log(req.session.user)
+        
         return res.redirect("/profile")
 
     }catch(error) {
@@ -92,7 +93,7 @@ router.get("/failedLogin", async (req, res) => {
 
     }catch(error) {
 
-        return res.send({
+        return res.status(500).send({
             status: "error",
             message: error.message
         })
@@ -116,6 +117,29 @@ router.post("/logout", (req, res)=>{
         res.redirect("/")
 
     })
+
+})
+
+
+router.get("/current", async (req, res) => {
+
+    const { user } = req.session //no hizo falta hacer un dto porque el user almacenado en session no tiene la contraseña guardada. 
+
+    try{
+
+        return res.status(200).send({
+            status:"success",
+            message: user
+        })
+
+    }catch(error) {
+
+        return res.status(500).send({
+            status: "error",
+            message: error.message
+        })
+
+    }
 
 })
 

@@ -13,8 +13,8 @@ import viewsRouter from "./routes/viewsRouter.js"
 import cookiesRouter from "./routes/cookiesRouter.js"
 import sessionsRouter from "./routes/sessionsRouter.js"
 import __dirname from "./utils.js"
-import { productController } from "./dao/Dao/productController.js"
-import { cartController } from "./dao/Dao/cartController.js"
+import { productController } from "./controllers/productController.js"
+import { cartController } from "./controllers/cartController.js"
 import initializatePassport from "./config/passportConfig.js"
 import config from "./config/config.js"
 
@@ -76,6 +76,7 @@ const connection = async () => {
 
 connection()
 
+
 //REFACTORIZAR EN SCRIPT APARTE
 socketServer.on("connection", socket => {
 
@@ -128,7 +129,7 @@ socketServer.on("connection", socket => {
 
     socket.on("addToCart", async (data) => {
 
-        const cartId = "6621781387846930f3efb0c2"
+        const cartId = "66688097b773d73b12ed2f97"
 
         try{
 

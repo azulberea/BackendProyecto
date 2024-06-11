@@ -1,5 +1,4 @@
-import { cartModel } from "../models/cartModel.js"
-import CartService from "../services/cartService.js"
+import CartService from "../dao/classes/mongo/cartDAOMongo.js"
 import { productController } from "./productController.js"
 
 export class CartController{
@@ -129,14 +128,6 @@ export class CartController{
         try{
 
             const result = await this.cartService.getAllProducts(cartId)
-
-            if(result.products.length == 0){    
-
-                //console.log("-CARTCONTROLLER el carrito esta vacio")
-
-                return "empty"
-
-            }
 
             //console.log(`-CARTCONTROLLER productos obtenidos del carrito exitosamente ${result}`)
 
@@ -377,6 +368,24 @@ export class CartController{
         }
 
     }
+
+    // async incrementProductByOne(cartId, productId) {
+
+    //     try{
+
+    //         const result = await this.cartService.incrementProductByOne(cartId, productId)
+
+    //         return result
+
+    //     }catch(error) {
+
+    //         console.log(error.message)
+            
+    //         return null
+        
+    //     }
+    // }
+
 }
 
 export const cartController = new CartController()

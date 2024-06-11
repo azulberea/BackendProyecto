@@ -1,4 +1,4 @@
-import { productModel } from "../models/productModel.js";
+import { productModel } from "../../models/productModel.js";
 
 export default class ProductService {
 
@@ -14,7 +14,9 @@ export default class ProductService {
         
         }catch(error){
 
-            return //console.log(`-PRODUCTSERVICE error creando producto: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE error creando producto: ${error.message}`)
 
         }
 
@@ -32,7 +34,9 @@ export default class ProductService {
 
         }catch(error){
 
-            return //console.log(`-PRODUCTSERVICE error obteniendo producto: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE error obteniendo producto: ${error.message}`)
 
         }
 
@@ -50,7 +54,9 @@ export default class ProductService {
 
         }catch(error){
 
-            return //console.log(`-PRODUCTSERVICE error obteniendo los productos: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE error obteniendo los productos: ${error.message}`)
 
         }
 
@@ -68,7 +74,9 @@ export default class ProductService {
 
         }catch(error) {
 
-            //console.log(`-PRODUCTSERVICE CATCH hubo un error obteniendo todos los productos: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE CATCH hubo un error obteniendo todos los productos: ${error.message}`)
 
         }
     }
@@ -85,7 +93,9 @@ export default class ProductService {
 
         }catch(error){
 
-            return //console.log(`-PRODUCTSERVICE error obteniendo producto por su ID: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE error obteniendo producto por su ID: ${error.message}`)
 
         }
 
@@ -103,7 +113,9 @@ export default class ProductService {
 
         }catch(error) {
 
-            return //console.log(`-PRODUCTSERVICE error modificando el producto: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE error modificando el producto: ${error.message}`)
 
         }
 
@@ -121,7 +133,9 @@ export default class ProductService {
 
         }catch(error) {
 
-            return //console.log(`-PRODUCTSERVICE error eliminando el producto: ${error.message}`)
+            console.log(error.message)
+
+            return null//console.log(`-PRODUCTSERVICE error eliminando el producto: ${error.message}`)
 
         }
 

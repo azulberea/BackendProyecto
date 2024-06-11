@@ -1,5 +1,5 @@
 <header>
-    <a href="http://localhost:8080/carts/6621781387846930f3efb0c2">cart</a>
+    <a href="http://localhost:8080/carts/{{user.cart}}">cart</a>
 </header>
 <h1> Bienvenid@ {{user.first_name}} {{user.last_name}}</h1>
 <hr>
@@ -12,9 +12,11 @@
             <span>precio: ${{this.price}}</span>
             <span>categoria: {{this.category}}</span>
             <span>thumbnails: {{this.thumbnails}}</span>
-
             <span>id: {{this._id}}</span>
-            <button class="button-delete" data-productid={{this._id}}>add to cart</button>
+            {{#unless ../isAdmin}}
+                <button class="button-delete" data-productid={{this._id}}>add to cart</button>
+            {{/unless}}
+            
         </div>
     {{/each}}
     </div>

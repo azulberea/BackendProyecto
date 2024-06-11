@@ -1,8 +1,8 @@
 import passport from "passport";
 import local from "passport-local";
 
-import userModel from "../dao/models/userModel.js";
 import { createHash, isValidPassword } from "../functionUtils.js";
+import { userController } from "../controllers/userController.js";
 
 const localStrategy = local.Strategy
 
@@ -20,7 +20,7 @@ const initializatePassport = ()=>{
 
             try{
 
-                let user = await userModel.findOne({email: username})
+                let user = await userController.getUserByEmail(username)
 
                 if(user){
 
@@ -29,22 +29,19 @@ const initializatePassport = ()=>{
                     return done(null, false)
 
                 }
+                
+                const role = email == "adminCoder@coder.com" ? "admin" : "user"
 
-                const newUser = {
-                    first_name,
-                    last_name,
-                    email,
-                    age,
-                    password: createHash(password)
-                }
-
-                const result = await userModel.create(newUser)
+                const hashPassword = createHash(password)
+                
+                const result = await userController.addUser(first_name, last_name, email, age, hashPassword, role)
 
                 return done(null, result)
 
             } catch(error) {
 
-                return done (error.message)
+                console.log(error.message)
+                return done(error.message)
 
             }
 
@@ -56,7 +53,7 @@ const initializatePassport = ()=>{
 
         try {
 
-            const user = await userModel.findOne({email: username})
+            const user = await userController.getUserByEmail(username)
 
             if(!user) {
 
@@ -89,7 +86,7 @@ const initializatePassport = ()=>{
 
     passport.deserializeUser(async (id, done) =>{
 
-        const user = await userModel.findById(id)
+        const user = await userController.getUserById(id)
 
         done(null, user)
 

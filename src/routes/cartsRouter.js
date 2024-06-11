@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { cartController } from "../dao/Dao/cartController.js";
+import { cartController } from "../controllers/cartController.js";
+import ticketModel from "../dao/models/ticketModel.js";
 
 const router = Router()
 
@@ -249,6 +250,27 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
 })
 
+router.post("/:cartid/purchase", async (req, res) => {
+
+    try{
+
+        const ticket = {
+            
+        }
+
+        const result = await ticketModel.create(ticket)
+
+    }catch(error){
+
+        return res.status(500).send({
+            status: "error",
+            message: `Hubo un error al realizar la compra: ${error.message}`
+        })
+
+    }
+
+})
+
 router.put("/:cartid", async (req, res)=>{ //NO FUNCIONA, IGUAL PENSABA ELIMINAR ESTA RUTA PORQUE NO ME PARECE MUY UTIL
 
     const cartId = req.params.cartid
@@ -292,5 +314,7 @@ router.put("/:cartid", async (req, res)=>{ //NO FUNCIONA, IGUAL PENSABA ELIMINAR
     }
 
 })
+
+
 
 export default router

@@ -1,7 +1,4 @@
-import mongoose from "mongoose"
-import { productModel } from "../models/productModel.js"
-import { paginate } from "mongoose-paginate-v2"
-import ProductService from "../services/productService.js"
+import ProductService from "../dao/classes/mongo/productDAOMongo.js"
 
 export class ProductController {
     
