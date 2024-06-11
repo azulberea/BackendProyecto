@@ -3,8 +3,6 @@ import handlebars from "express-handlebars"
 import { Server } from "socket.io"
 import mongoose from "mongoose"
 import cookieParser from "cookie-parser"
-import session from "express-session"
-import MongoStore from "connect-mongo"
 import passport from "passport"
 
 import productsRouter from "./routes/productsRouter.js"
@@ -17,6 +15,7 @@ import { productController } from "./controllers/productController.js"
 import { cartController } from "./controllers/cartController.js"
 import initializatePassport from "./config/passportConfig.js"
 import config from "./config/config.js"
+import { sessionMiddleware } from "./middlewares/session.js"
 
 const { port, mongoUrl } = config
 
@@ -32,19 +31,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true})); 
 app.use(express.static(`${__dirname}/../public`));
 app.use(cookieParser())
-app.use(session(
-    {
-        store: MongoStore.create(
-            {
-                mongoUrl: mongoUrl,
-                ttl: 300
-            }
-        ),
-        secret: "secretPhrase",
-        resave: true,
-        saveUninitialized: true
-    }
-))
+app.use(sessionMiddleware)
+socketServer.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res || {}, next);
+});
 
 initializatePassport()
 app.use(passport.initialize())
@@ -79,6 +69,10 @@ connection()
 
 //REFACTORIZAR EN SCRIPT APARTE
 socketServer.on("connection", socket => {
+
+    const session = socket.request.session;
+
+    console.log(session.user);
 
     console.log("nuevo cliente conectado")
     
@@ -129,7 +123,7 @@ socketServer.on("connection", socket => {
 
     socket.on("addToCart", async (data) => {
 
-        const cartId = "66688097b773d73b12ed2f97"
+        const cartId = session.user.cart
 
         try{
 
@@ -147,7 +141,7 @@ socketServer.on("connection", socket => {
 
     socket.on("deleteProductFromCart", async (data) => {
 
-        const cartId = "6621781387846930f3efb0c2"
+        const cartId = session.user.cart
 
         try{
 

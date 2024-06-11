@@ -89,7 +89,7 @@ router.get("/carts/:cartid", auth, authUser, async (req, res)=>{
 
     try{
 
-        const result = await cartController.getAllCartProducts("6621781387846930f3efb0c2")
+        const result = await cartController.getAllCartProducts(cartId)
 
         if(!result){
 
