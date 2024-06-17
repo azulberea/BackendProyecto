@@ -1,5 +1,4 @@
 import ProductService from "../dao/classes/mongo/productDAOMongo.js"
-import { productModel } from "../dao/models/productModel.js"
 
 export class ProductController {
     
@@ -36,15 +35,13 @@ export class ProductController {
     //OK
     async addProduct( title, description, price, stock, category, status, thumbnails ) { 
 
+        try {
+            
         if( !title || !description || !price || !stock || !category ){
 
-            //console.log(`-PMDB asegurate de completar todos los campos`)
-
-            return 
+            return
 
         }
-
-        try {
             
             const productExisting = await this.prodService.getByTitle(title)
 
@@ -73,7 +70,7 @@ export class ProductController {
         } 
         catch(error) {
 
-            //console.log(`-PMDB CATCH hubo un error creando el producto: ${error.message}`)
+            console.log(error)
 
         }
     }
@@ -135,20 +132,18 @@ export class ProductController {
             const result = await this.prodService.getById(id)
 
             if(!result){
-
-                //console.log(`-PMDB no existe un producto con ese id`)
-
+                
                 return
 
             }
 
-            //console.log(`-PMDB producto obtenido por su ID exitosamente`)
+            console.log(result)
 
             return result
 
         }catch(error) {
 
-            //console.log(`-PMDB CATCH hubo un error obteniendo el producto  por su ID: ${error.message}`)
+            console.log(error)
 
         }
 

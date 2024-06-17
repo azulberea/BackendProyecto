@@ -3,6 +3,9 @@ import { cartController } from "../controllers/cartController.js";
 import ticketModel from "../dao/models/ticketModel.js";
 import moment from "moment";
 import { ticketController } from "../controllers/ticketController.js";
+import CustomError from "../services/errorService/CustomError.js";
+import { idErrorInfo } from "../services/errorService/info.js";
+import EErrors from "../services/errorService/enums.js";
 
 const router = Router()
 
@@ -26,11 +29,10 @@ router.post("/", async (req, res) => {
             message: `Carrito creado correctamente: ${result}`})
 
     }catch(error){
-        
-        return res.status(500).send({
-            status: "error",
-            message: "Hubo un error al crear el carrito"
-        })
+
+        console.log(error)
+
+        return res.send(error)
 
     }
 
@@ -48,9 +50,12 @@ router.post("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            return res.status(400).send({
-                status: "error",
-                message:"Hubo un error añadiento el producto al carrito. Asegurate de que existe un carrito y un producto con ese ID"})
+            CustomError.createError({
+                name: "Error getting resource",
+                cause: idErrorInfo(productId, cartId),
+                message: "Error trying to get product or cart requires",
+                code: EErrors.INEXISTENT_RESOURCE
+            })
 
         }
 
@@ -60,10 +65,10 @@ router.post("/:cartid/products/:productid", async (req, res)=>{
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: "Hubo un error al agregar el producto al carrito"
-        })
+        console.log(error)
+
+        return res.send(error)
+
     }
 
 })
@@ -109,9 +114,11 @@ router.get("/:cartid", async (req, res)=>{
 
         if(!result){
 
-            return res.status(500).send({
-                status: "error",
-                message: "Hubo un error al obtener los productos del carrito"
+            CustomError.createError({
+                name: "Error getting cart",
+                cause: idErrorInfo(cartId),
+                message: "Error trying to get cart",
+                code: EErrors.INEXISTENT_RESOURCE
             })
 
         }
@@ -131,12 +138,11 @@ router.get("/:cartid", async (req, res)=>{
         })
 
     }catch(error){
-        
-        return res.status(500).send({
-            status: "error",
-            message: "Hubo un error al obtener los productos del carrito"
-        })
-        
+
+        console.log(error)
+
+        return res.send(error)
+
     }
 })
 
@@ -152,9 +158,11 @@ router.delete("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            return res.status(400).send({
-                status: "error",
-                message:"Hubo un error al eliminar el producto del carrito. Asegurese de que exista un carrito y un producto con esos ID"
+            CustomError.createError({
+                name: "Error getting resources",
+                cause: getProductByIdErrorInfo(productId, cartId),
+                message: "Error trying to get resources",
+                code: EErrors.INEXISTENT_RESOURCE
             })
 
         }
@@ -166,10 +174,9 @@ router.delete("/:cartid/products/:productid", async (req, res)=>{
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: `Hubo un error al eliminar el producto del carrito: ${error.message}`
-        })
+        console.log(error)
+
+        return res.send(error)
 
     }
 
@@ -185,9 +192,11 @@ router.delete("/:cartid", async (req, res)=>{
 
         if(!result){
 
-            return res.status(400).send({
-                status: "error",
-                message:"Hubo un error al intentar eliminar todos los productos del carrito. Asegurese de que exista un carrito con ese ID"
+            CustomError.createError({
+                name: "Error getting cart",
+                cause: getProductByIdErrorInfo(cartId),
+                message: "Error trying to get cart",
+                code: EErrors.INEXISTENT_RESOURCE
             })
 
         }
@@ -199,10 +208,9 @@ router.delete("/:cartid", async (req, res)=>{
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: `Hubo un error al eliminar los productos del carrito: ${error.message}`
-        })
+        console.log(error)
+
+        return res.send(error)
 
     }
 
@@ -222,17 +230,22 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            return res.status(400).send({
-                status: "error",
-                message: "Hubo un error al actualizar el producto. Asegurate de que los ID correspondan a un carrito y producto existentes"})
+            CustomError.createError({
+                name: "Error getting resource",
+                cause: iddErrorInfo(productId, cartId),
+                message: "Error trying to get resource",
+                code: EErrors.INEXISTENT_RESOURCE
+            })
 
         }
 
         if(result.modifiedCount == 0){
 
-            return res.status(500).send({
-                status: "error",
-                message: "Hubo un error al actualizar el producto"
+            CustomError.createError({
+                name: "Internal server error",
+                cause: getProductByIdErrorInfo(id),
+                message: "Unacknowledged changes",
+                code: EErrors.INTERNAL_SERVER_ERROR
             })
 
         }
@@ -243,10 +256,9 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: `Hubo un error al actualizar el producto: ${error.message}`
-        })
+        console.log(error)
+
+        return res.send(error)
 
     }
 
@@ -268,13 +280,11 @@ router.post("/:cartid/purchase", async (req, res) => {
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: `Hubo un error al realizar la compra: ${error.message}`
-        })
+        console.log(error)
+
+        return res.send(error)
 
     }
-
 })
 
 router.put("/:cartid", async (req, res)=>{ //NO FUNCIONA, IGUAL PENSABA ELIMINAR ESTA RUTA PORQUE NO ME PARECE MUY UTIL

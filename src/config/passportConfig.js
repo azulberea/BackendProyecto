@@ -1,7 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
 
-import { createHash, isValidPassword } from "../functionUtils.js";
+import { createHash, isValidPassword } from "../utils/functionUtils.js";
 import { userController } from "../controllers/userController.js";
 
 const localStrategy = local.Strategy

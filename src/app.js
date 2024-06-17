@@ -17,6 +17,7 @@ import initializatePassport from "./config/passportConfig.js"
 import config from "./config/config.js"
 import { sessionMiddleware } from "./middlewares/session.js"
 import Sockets from "../socketServer.js"
+import errorHandler from "./middlewares/errorMiddleware.js"
 
 const { port, mongoUrl } = config
 
@@ -42,12 +43,14 @@ app.engine("handlebars", handlebars.engine())
 app.set("views", `${__dirname}/views`)
 app.set("view engine", "handlebars")
 
+
+
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartsRouter)
 app.use("/api/sessions", sessionsRouter)
 app.use("/", viewsRouter)
 app.use("/cookies", cookiesRouter)
-
+app.use(errorHandler)
 
 const connection = async () => {
 

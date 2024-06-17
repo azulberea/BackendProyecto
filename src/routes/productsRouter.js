@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { productController } from "../controllers/productController.js";
-import { productModel } from "../dao/models/productModel.js";
+import { createProduct } from "../utils/functionUtils.js";
+import CustomError from "../services/errorService/CustomError.js";
+import { addProductErrorInfo, idErrorInfo } from "../services/errorService/info.js";
+import EErrors from "../services/errorService/enums.js";
 
 const router = Router()
 
@@ -64,18 +67,17 @@ router.get("/", async (req, res) => {
             nextLink: result.hasNextPage ? `http://localhost:8080/api/products?page=${products.nextPage}` : null
         })
 
-    }catch(error) {
+    }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: error.message
-        })
+        console.log(error)
+
+        return res.send(error)
 
     }
 
 })
 
-router.get("/:productid", async (req, res) => {
+router.get("/product/:productid", async (req, res) => {
 
     let productId = req.params.productid
 
@@ -85,7 +87,12 @@ router.get("/:productid", async (req, res) => {
 
         if(!result) {
 
-            return res.status(404).send({message: "No existe un producto con ese id"})
+            CustomError.createError({
+                name: "Error getting product",
+                cause: idErrorInfo(productId),
+                message: "Error trying to get product",
+                code: EErrors.INEXISTENT_RESOURCE
+            })
 
         }
 
@@ -93,9 +100,9 @@ router.get("/:productid", async (req, res) => {
 
     }catch(error){
 
-        return res.status(500).send({status:"error",
-            message: error.message
-        })
+        console.log(error)
+
+        return res.send(error)
 
     }
 
@@ -111,27 +118,31 @@ router.post("/", async (req, res) => {
 
         if(!result){
 
-            return res.status(400).send({
-                status:"error",
-                message:"Hubo un error al crear el producto. Asegurate de haber completado todos los campos y que el producto no exista en la base de datos"
+            CustomError.createError({
+                name: "Product creation error",
+                cause: addProductErrorInfo({title, description, price, stock, category}),
+                message: "Error trying to add product",
+                code: EErrors.INVALID_TYPES_ERROR
             })
 
         }
 
-        return res.status(201).send({message: "Producto creado correctamente"})
+        return res.status(201).send({
+            status: "success",
+            message: "Producto creado correctamente"
+        })
 
     }catch(error){
-        
-        return res.status(500).send({
-            status: "error",
-            message:"Hubo un error creando el producto"
-        })
+
+        console.log(error)
+
+        return res.status(500).send(error)
 
     }
 
 })
 
-router.put("/:productid", async (req, res) => {
+router.put("/product/:productid", async (req, res) => {
 
     const productId = req.params.productid
 
@@ -165,7 +176,7 @@ router.put("/:productid", async (req, res) => {
 
 })
 
-router.delete("/:productid", async (req, res) => {
+router.delete("/product/:productid", async (req, res) => {
 
     const productId = req.params.productid
 
@@ -174,10 +185,12 @@ router.delete("/:productid", async (req, res) => {
         const result = await productController.deleteProduct(productId)
 
         if(!result){
-
-            return res.status(400).send({
-                status: "error",
-                message: "Hubo un error al intentar eliminar el producto. Asegurate de que el ID proporcionado coincida con el de un producto existente"
+            
+            CustomError.createError({
+                name: "Error getting product",
+                cause: idErrorInfo(productId),
+                message: "Error trying to get product",
+                code: EErrors.INEXISTENT_RESOURCE
             })
 
         }
@@ -223,4 +236,28 @@ router.get("/title/:title", async (req, res) => {
 
 })
 
+router.get("/mockingproducts", async (req, res) => {
+
+    try{
+
+        let products = []
+
+        for (let i = 0; i < 50; i++) {
+            await products.push(createProduct())
+        }
+
+        return res.status(200).send({
+            status: "success",
+            products: products
+        })
+
+    }catch(error){
+
+        return res.status(500).send({
+            status:error,
+            message: error.message
+        })
+
+    }
+})
 export default router
