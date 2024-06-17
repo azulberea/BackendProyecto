@@ -1,15 +1,20 @@
-    <form method="post" action="api/sessions/logout">
-        <button type="submit">log out</button>
-    </form>
-    
+<header>
+    <a href="http://localhost:8080/profile">profile</a>
+    <a href="http://localhost:8080/products">products</a>
+    <a href={{cartURL}}>cart</a>
+</header>
+<form method="post" action="api/sessions/logout">
+    <button type="submit">log out</button>
+</form>
+
+<div>
+    <h1> PROFILE </h1>
     <div>
-        <h1> PROFILE </h1>
-        <div>
-            <p>First Name: {{user.first_name}}</p>
-            <p>Last Name: {{user.last_name}}</p>
-            <p>Email: {{user.email}}</p>
-            <p>Age: {{user.age}}</p>
-            <p>Role: {{user.role}}</p>
-        </div>
+        <p>First Name: {{user.first_name}}</p>
+        <p>Last Name: {{user.last_name}}</p>
+        <p>Email: {{user.email}}</p>
+        <p>Age: {{user.age}}</p>
+        <p>Role: {{user.role}}</p>
     </div>
+</div>
     
