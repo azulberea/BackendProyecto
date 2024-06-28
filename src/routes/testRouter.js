@@ -8,10 +8,10 @@ router.get("/loggerTest", async (req, res) => {
     try{
 
         req.logger.fatal(`level FATAL at ${req.url} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
-        (prod and dev in file and console)`)
+        (prod in file and console and dev in console)`)
 
         req.logger.error(`level ERROR at ${req.url} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
-        (prod and dev in file and console)`)
+        (prod in file and console and dev in console)`)
 
         req.logger.warning(`level WARNING at ${req.url} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
         (prod and dev in console)`)

@@ -34,11 +34,6 @@ const devLogger = winston.createLogger({
                 winston.format.colorize(),
                 winston.format.simple()
             )
-        }),
-        new winston.transports.File({
-            filename: "./logs/errors.log",
-            level: "error",
-            format: winston.format.simple()
         })
     ]
 })
