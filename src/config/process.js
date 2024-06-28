@@ -18,4 +18,4 @@ program
 
 export const options = program.opts()
 
-    console.log(`Modo seleccionado: ${options.mode}`)
+console.log(`Modo seleccionado: ${options.mode}`)

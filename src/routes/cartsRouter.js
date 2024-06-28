@@ -3,9 +3,9 @@ import { cartController } from "../controllers/cartController.js";
 import ticketModel from "../dao/models/ticketModel.js";
 import moment from "moment";
 import { ticketController } from "../controllers/ticketController.js";
-import CustomError from "../services/errorService/CustomError.js";
-import { idErrorInfo } from "../services/errorService/info.js";
-import EErrors from "../services/errorService/enums.js";
+// import CustomError from "../services/errorService/CustomError.js";
+// import { idErrorInfo } from "../services/errorService/info.js";
+// import EErrors from "../services/errorService/enums.js";
 
 const router = Router()
 
@@ -50,13 +50,13 @@ router.post("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            CustomError.createError({
-                name: "Error getting resource",
-                cause: idErrorInfo(productId, cartId),
-                message: "Error trying to get product or cart requires",
-                code: EErrors.INEXISTENT_RESOURCE
-            })
-
+            // CustomError.createError({
+            //     name: "Error getting resource",
+            //     cause: idErrorInfo(productId, cartId),
+            //     message: "Error trying to get product or cart requires",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
+return
         }
 
         return res.status(200).send({
@@ -114,12 +114,13 @@ router.get("/:cartid", async (req, res)=>{
 
         if(!result){
 
-            CustomError.createError({
-                name: "Error getting cart",
-                cause: idErrorInfo(cartId),
-                message: "Error trying to get cart",
-                code: EErrors.INEXISTENT_RESOURCE
-            })
+            // CustomError.createError({
+            //     name: "Error getting cart",
+            //     cause: idErrorInfo(cartId),
+            //     message: "Error trying to get cart",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
+            return
 
         }
 
@@ -158,12 +159,13 @@ router.delete("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            CustomError.createError({
-                name: "Error getting resources",
-                cause: getProductByIdErrorInfo(productId, cartId),
-                message: "Error trying to get resources",
-                code: EErrors.INEXISTENT_RESOURCE
-            })
+            // CustomError.createError({
+            //     name: "Error getting resources",
+            //     cause: getProductByIdErrorInfo(productId, cartId),
+            //     message: "Error trying to get resources",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
+            return
 
         }
 
@@ -192,12 +194,13 @@ router.delete("/:cartid", async (req, res)=>{
 
         if(!result){
 
-            CustomError.createError({
-                name: "Error getting cart",
-                cause: getProductByIdErrorInfo(cartId),
-                message: "Error trying to get cart",
-                code: EErrors.INEXISTENT_RESOURCE
-            })
+            // CustomError.createError({
+            //     name: "Error getting cart",
+            //     cause: getProductByIdErrorInfo(cartId),
+            //     message: "Error trying to get cart",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
+            return
 
         }
 
@@ -230,23 +233,24 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            CustomError.createError({
-                name: "Error getting resource",
-                cause: iddErrorInfo(productId, cartId),
-                message: "Error trying to get resource",
-                code: EErrors.INEXISTENT_RESOURCE
-            })
-
+            // CustomError.createError({
+            //     name: "Error getting resource",
+            //     cause: iddErrorInfo(productId, cartId),
+            //     message: "Error trying to get resource",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
+            return
         }
 
         if(result.modifiedCount == 0){
 
-            CustomError.createError({
-                name: "Internal server error",
-                cause: getProductByIdErrorInfo(id),
-                message: "Unacknowledged changes",
-                code: EErrors.INTERNAL_SERVER_ERROR
-            })
+            // CustomError.createError({
+            //     name: "Internal server error",
+            //     cause: getProductByIdErrorInfo(id),
+            //     message: "Unacknowledged changes",
+            //     code: EErrors.INTERNAL_SERVER_ERROR
+            // })
+            return
 
         }
 

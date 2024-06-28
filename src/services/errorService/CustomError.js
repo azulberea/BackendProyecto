@@ -1,11 +1,11 @@
-export default class CustomError {
+// export default class CustomError {
 
-    static createError({name="error",cause,message,code=1}) {
-        const error = new Error(message, {cause})
-        error.name = name
-        error.code= code
+//     static createError({name="error",cause,message,code=1}) {
+//         const error = new Error(message, {cause})
+//         error.name = name
+//         error.code= code
         
-        throw error
-    }
+//         throw error
+//     }
     
-}
+// }

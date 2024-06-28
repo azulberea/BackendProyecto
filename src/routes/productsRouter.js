@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { productController } from "../controllers/productController.js";
 import { createProduct } from "../utils/functionUtils.js";
-import CustomError from "../services/errorService/CustomError.js";
-import { addProductErrorInfo, idErrorInfo } from "../services/errorService/info.js";
-import EErrors from "../services/errorService/enums.js";
+import moment from "moment";
+// import CustomError from "../services/errorService/CustomError.js";
+// import { addProductErrorInfo, idErrorInfo } from "../services/errorService/info.js";
+// import EErrors from "../services/errorService/enums.js";
 
 const router = Router()
 
@@ -87,11 +88,18 @@ router.get("/product/:productid", async (req, res) => {
 
         if(!result) {
 
-            CustomError.createError({
-                name: "Error getting product",
-                cause: idErrorInfo(productId),
-                message: "Error trying to get product",
-                code: EErrors.INEXISTENT_RESOURCE
+            // CustomError.createError({
+            //     name: "Error getting product",
+            //     cause: idErrorInfo(productId),
+            //     message: "Error trying to get product",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
+            
+            req.logger.error(`level ERROR at ${req.url} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: no existe un producto con ese ID`)
+
+            return  res.status(404).send({status: "error",
+                message: "no existe un producto con ese ID"
             })
 
         }
@@ -100,9 +108,10 @@ router.get("/product/:productid", async (req, res) => {
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${req.url} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.send(error.message)
 
     }
 
@@ -118,13 +127,14 @@ router.post("/", async (req, res) => {
 
         if(!result){
 
-            CustomError.createError({
-                name: "Product creation error",
-                cause: addProductErrorInfo({title, description, price, stock, category}),
-                message: "Error trying to add product",
-                code: EErrors.INVALID_TYPES_ERROR
-            })
+            // CustomError.createError({
+            //     name: "Product creation error",
+            //     cause: addProductErrorInfo({title, description, price, stock, category}),
+            //     message: "Error trying to add product",
+            //     code: EErrors.INVALID_TYPES_ERROR
+            // })
 
+            return 
         }
 
         return res.status(201).send({
@@ -186,13 +196,14 @@ router.delete("/product/:productid", async (req, res) => {
 
         if(!result){
             
-            CustomError.createError({
-                name: "Error getting product",
-                cause: idErrorInfo(productId),
-                message: "Error trying to get product",
-                code: EErrors.INEXISTENT_RESOURCE
-            })
+            // CustomError.createError({
+            //     name: "Error getting product",
+            //     cause: idErrorInfo(productId),
+            //     message: "Error trying to get product",
+            //     code: EErrors.INEXISTENT_RESOURCE
+            // })
 
+            return
         }
 
         return res.status(200).send({
