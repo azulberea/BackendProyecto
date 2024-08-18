@@ -387,13 +387,14 @@ router.get("/adminDashboard/users",passportCall("jwt"), roleAuth("admin"), async
                 cart: user.cart,
                 last_connection: user.last_connection,
                 status: user.status ? "activo" : "inactivo",
-                id: user._id
+                id: user._id,
+                isAdmin: user.role == "admin" && true
             }
         })
 
         return res.render("userManagement",{
             style: "styles.css",
-            users: usersToShow 
+            users: usersToShow
         })
 
     }catch(error){

@@ -5,22 +5,23 @@
 </header>
 <div class="users-container" id="users-container">
     {{#each users}}
+        {{#unless this.isAdmin}}
         <div class="card">
             <span>Nombre: {{this.full_name}}</span>
             <span>E-mail: {{this.email}}</span>
             <span>Edad: {{this.age}}</span>
             <span>Membresia: {{this.membership}}</span>
+            <button id="button-change-membership" data-userid={{this.id}}> cambiar membresia </button>
             <span>ID del carrito: {{this.cart}}</span>
             <span>Ultima conexión: {{this.last_connection}}</span>
             <span>Estado: {{this.status}}</span>
             <span>ID: {{this.id}}</span>
-            <button class="button-delete" data-userid={{this.id}}>X</button>
+            <button id="button-delete-user" class="button-delete" data-userid={{this.id}}>X</button>
         </div>
+        {{/unless}}
     {{/each}}
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="/js/userManagement.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
