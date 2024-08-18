@@ -1,5 +1,10 @@
 import { Router } from "express";
+
 import moment from "moment";
+import {fileURLToPath} from "url"
+import { cartController } from "../controllers/cartController.js";
+import TicketService from "../dao/classes/mongo/ticketDAOMongo.js";
+import { ticketController } from "../controllers/ticketController.js";
 
 const router = Router()
 
@@ -30,13 +35,45 @@ router.get("/loggerTest", async (req, res) => {
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: error.message
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
+
+        return res.status(500).send({status: "Error",
+            payload: error.message
         })
 
     }
 
 })
 
+router.put("/incrementTest", async (req, res)=> { //funciona incrementar y decrementar
+
+    const { cartId, productId } = req.body
+
+    try{
+
+        const result = await cartController.incOrDecProductQuantity(cartId, productId, "dec")
+
+        res.send({result})
+        
+    }catch(e){
+
+    }
+
+})
+
+router.get("/populateticket", async (req, res)=> {
+
+    try{
+
+        const { ticketid } = req.body
+
+        const result = await ticketController.getTicket(ticketid)
+
+        return res.send({result})
+
+    }catch(e){
+        res.send({e})
+    }
+})
 export default router

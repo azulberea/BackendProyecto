@@ -1,4 +1,8 @@
-import fs from "fs" 
+import fs from "fs"
+import { fileURLToPath } from "url"
+import moment from "moment"
+
+import { defineLogger } from "../../../utils/logger"
 
 export class productManagerFS {
     
@@ -55,7 +59,8 @@ export class productManagerFS {
 
         if(validarPropiedadesVacias(productoAAgregar)) {
 
-            console.error("debes llenar todos los campos")
+            defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: Campos incompletos`)
 
             return "emptyProperties"
 
@@ -63,7 +68,8 @@ export class productManagerFS {
 
         if(this.validarProductoExistente(productoAAgregar.title)) {
 
-            console.error("Producto existente, intente agregar otro")
+            defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: Producto ya existente`)
 
             return "existingProduct"
 

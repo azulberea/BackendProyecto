@@ -12,6 +12,7 @@
     --font-color-sub: #7e7e7e;
     --bg-color: #111;
     --main-color: #fefefe;
+    width: 20vw;
     padding: 20px;
     background: var(--bg-color);
     display: flex;
@@ -69,7 +70,19 @@
     color: var(--font-color);
     cursor: pointer;
   }
-  
+
+.failed-register{
+  color: red;
+  width: 100%;
+  text-align: center;
+}
+
+.failed-login{
+  color: red;
+  width: 100%;
+  text-align: center;
+}
+
 .products{
   margin-top: 3rem;
   display: flex;

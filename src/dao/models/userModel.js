@@ -6,11 +6,11 @@ const userSchema = mongoose.Schema({
 
     first_name:{
         type: String,
-        require: true,
+        require: true
     },
     last_name:{
         type: String,
-        require: true,
+        require: true 
     },
     email:{
         type: String,
@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
     },
     age:{
         type: Number,
-        require: true,
+        require: false,
     },
     password:{
         type: String,
@@ -31,9 +31,34 @@ const userSchema = mongoose.Schema({
         type:String,
         require: true
     },
+    premium:{
+        type:Boolean,
+        require: true
+    },
     cart:{
         type: mongoose.Schema.ObjectId,
-        ref: "products"
+        ref: "carts"
+    },
+    documents:{
+        type: [
+            {
+                name:{
+                    type: String
+                },
+                reference:{
+                    type: String
+                }
+            }
+        ],
+        default: []
+    },
+    last_connection:{
+        type: Date,
+        default: null
+    },
+    status:{
+        type: Boolean,
+        default: true
     }
 })
 

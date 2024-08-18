@@ -1,20 +1,27 @@
 <header>
     <a href="http://localhost:8080/profile">profile</a>
     <a href="http://localhost:8080/products">products</a>
+    <a href="http://localhost:8080/realTimeProducts">product admin</a>
     <a href={{cartURL}}>cart</a>
 </header>
 <form method="post" action="api/sessions/logout">
     <button type="submit">log out</button>
 </form>
 
-<div>
+<div id="profile-info">
     <h1> PROFILE </h1>
     <div>
-        <p>First Name: {{user.first_name}}</p>
-        <p>Last Name: {{user.last_name}}</p>
-        <p>Email: {{user.email}}</p>
-        <p>Age: {{user.age}}</p>
-        <p>Role: {{user.role}}</p>
+        <p>First Name: {{first_name}}</p>
+        <p>Last Name: {{last_name}}</p>
+        <p>Email: {{email}}</p>
+        <p>Age: {{age}}</p>
+        <p>Role: {{role}}</p>
+        <p>Membresía: {{membership}}</p>
     </div>
+        <button id="change-membership"> QUIERO CAMBIAR MI MEMBRESIA</button>
 </div>
-    
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="/js/profile.js"></script>

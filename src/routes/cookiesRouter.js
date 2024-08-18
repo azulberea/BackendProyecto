@@ -1,19 +1,19 @@
-import { Router } from "express";
+// import { Router } from "express";
 
-const router = Router()
+// const router = Router()
 
-router.post("/setCookies", (req, res)=>{
+// router.post("/setCookies", (req, res)=>{
 
-    const correo =  req.body.correo ? req.body.correo : "undefined"
+//     const correo =  req.body.correo ? req.body.correo : "undefined"
 
-    res.cookie("user", correo, {maxAge:10000}).redirect("/")
+//     res.cookie("user", correo, {maxAge:10000}).redirect("/")
 
-})
+// })
 
-router.get("/getCookies", (req, res)=>{
+// router.get("/getCookies", (req, res)=>{
 
-    res.send(req.cookies)
+//     res.send(req.cookies)
 
-})
+// })
 
-export default router
+// export default router

@@ -5,9 +5,11 @@
         <input class="input" name="email" placeholder="Email" type="email">
         <input class="input" name="password" placeholder="Password" type="password">
         <button class="button-confirm" type="submit">Log in→</button>
-        {{#if failedLogin}}
-            <p style="color:red">usuario o contraseña incorrectos</p>
+        {{!-- <a href="/api/sessions/github">Logear con github</a> --}}
+        {{#if redirected}}
+            <p style="color:red">Usuario o contraseña incorrectos</p>
         {{/if}}
+        <p>Has olvidado tu contraseña? <a href="/passwordRestore">click para reestablecerla</a> </p>
         <a href="http://localhost:8080/register">Register</a>
     </form>
 

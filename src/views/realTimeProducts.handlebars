@@ -1,3 +1,9 @@
+<header>
+    <a href="http://localhost:8080/profile">profile</a>
+    <a href="http://localhost:8080/products">products</a>
+    <a href="http://localhost:8080/realTimeProducts">product admin</a>
+    <a href={{cartURL}}>cart</a>
+</header>
 <form class="form" id="createProductsForm">
     <div class="title">
         Add a product
@@ -7,6 +13,7 @@
     <input class="input" id="price" name="price" placeholder="Price" type="text">
     <input class="input" id="stock" name="stock" placeholder="Stock" type="text">
     <input class="input" id="category" name="category" placeholder="Category" type="text">
+    {{!-- <input id="files" name="files" placeholder="Category" type="file"> --}}
     <div class="status-div">
         <span>Status</span>
         <div class="radio-input-div">
@@ -30,12 +37,15 @@
         <span>Thumbnails: {{this.thumbnails}}</span>
         <span>Status: {{this.status}}</span>
         <span>ID: {{this._id}}</span>
-        <button class="button-delete" data-productid={{this._id}}>X</button>
+        <span>owner: {{this.owner}}</span>
+        {{#if this.canModify}}
+            <button class="button-delete" data-productid={{this._id}}>X</button>
+        {{/if}}
+        
     </div>
 {{/each}}
     </div>
 </div>
-
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

@@ -1,4 +1,9 @@
+import moment from "moment";
+import { fileURLToPath } from "url";
+
+import { defineLogger } from "../utils/logger.js";
 import ProductService from "../dao/classes/mongo/productDAOMongo.js"
+import { userController } from "../controllers/userController.js"
 
 export class ProductController {
     
@@ -16,61 +21,80 @@ export class ProductController {
 
             if(result.docs.length == 0){
 
-                //console.log(`-PMDB no existen productos para mostrar`)
+                defineLogger.info(`level INFO at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No hay productos para mostrar`)
 
                 return
 
             }
-
-            //console.log(`-PMDB productos paginados exitosamente ${typeof(result)}`)
 
             return result
 
         }catch(error) {
 
-            return //console.log(`PMDB CATCH hubo un error al paginar los productos: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
     }
     //OK
-    async addProduct( title, description, price, stock, category, status, thumbnails ) { 
+    async addProduct( title, description, price, stock, category, status, owner, thumbnails ) { 
 
         try {
             
         if( !title || !description || !price || !stock || !category ){
 
+            defineLogger.info(`level INFO at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: No se creo el producto porque falta completar uno o mas campos}`)
+
             return
 
         }
             
-            const productExisting = await this.prodService.getByTitle(title)
+        const productExisting = await this.prodService.getByTitle(title)
 
-            if(productExisting){
+        if(productExisting){
 
-                //console.log(`-PMDB el producto que estas intentando agregar ya existe`)
+            defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: No se creo el producto porque ya existe`)
 
-                return
+            return
 
-            }
+        }
 
-            const result = await this.prodService.add({
-                title: title,
-                description: description,
-                price: price,
-                stock: stock,
-                category: category,
-                status: status,
+        const productOwner = await userController.getUserByEmail(owner)
+
+        if(!productOwner || !productOwner.premium){
+
+            defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: Para crear el producto debes tener una cuenta registrada en nuestra base de datos y ser premium`)
+
+            return
+
+        }
+        
+        const result = await this.prodService.add({
+                title,
+                description,
+                price,
+                stock,
+                category,
+                status,
+                owner: owner ?? "adminCoder@coder.com", 
                 thumbnails: thumbnails
             })
-                
-            //console.log(`-PMDB producto creado correctamente ${result}`)
 
             return result
 
         } 
         catch(error) {
 
-            console.log(error)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
     }
@@ -83,19 +107,21 @@ export class ProductController {
 
             if(!result){
                 
-                //console.log("-PMDB no hay resultado")
+                defineLogger.info(`level INFO at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No existe el producto ${title}`)
                 
                 return 
 
             }
 
-            //console.log(`-PMDB ${result}`)
-
             return result
 
-        }catch(error){
+        }catch(error) {
 
-            return //console.log(`-PMDB CATCH hubo un error obteniendo el producto por su titulo: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
     }
@@ -108,7 +134,8 @@ export class ProductController {
 
             if(result.length == 0){
 
-                //console.log(`-PMDB no hay productos existentes`)
+                defineLogger.info(`level INFO at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No hay productos existentes`)
 
                 return
 
@@ -116,10 +143,12 @@ export class ProductController {
 
             return result
 
-        } 
-        catch(error){
+        }catch(error) {
 
-            return //console.log(`-PMDB hubo un error obteniendo todos los productos: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
 
@@ -133,17 +162,21 @@ export class ProductController {
 
             if(!result){
                 
+                defineLogger.info(`level INFO at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No existe un producto con ese id (${id})`)
+
                 return
 
             }
-
-            console.log(result)
 
             return result
 
         }catch(error) {
 
-            console.log(error)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
 
@@ -157,15 +190,17 @@ export class ProductController {
 
             if(!result.acknowledged){
 
-                //console.log(`-PMDB no hubo modificaciones porque la modificacion es invalida`)
+                defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No hubo cambios porque la modificacion es invalida`)
 
                 return
-                
+
             }
 
             if(result.matchedCount < 1){
 
-                //console.log(`-PMDB no hubo modificaciones porque no existe un producto con ese ID`)
+                defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No hubo modificaciones porque no existe un producto con ese id (${id})`)
 
                 return 
 
@@ -173,10 +208,12 @@ export class ProductController {
 
             return result
 
-        }
-        catch(error){
+        }catch(error) {
 
-            //console.log(`-PMDB CATCH hubo un error actualizando el producto`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
     }
@@ -189,7 +226,8 @@ export class ProductController {
 
             if(!result.acknowledged){
 
-                //console.log(`-PMDB no se elimino ningun producto. intentelo de nuevo`)
+                defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No se ha podido eliminar el producto (${id})`)
 
                 return
 
@@ -197,7 +235,8 @@ export class ProductController {
 
             if(result.deletedCount < 1){
 
-                //console.log(`-PMDB no se pudo eliminar el producto, asegurate de que el producto a eliminar exista`)
+                defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No sepudo eliminar el producto (${id})`)
 
                 return
 
@@ -205,13 +244,13 @@ export class ProductController {
 
             return result
 
-        }
-        catch(error){
+        }catch(error) {
 
-            console.log(error.message)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
             return null
-            
+
         }
 
     }
@@ -224,12 +263,13 @@ export class ProductController {
 
             return result
 
-        }catch(error){
+        }catch(error) {
 
-            console.log(error.message)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
             return null
-            
+
         }
     }
 

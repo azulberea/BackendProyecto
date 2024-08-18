@@ -1,4 +1,4 @@
-{{#unless failedLogin}}
+
     <form class="form" method="post" action="/api/sessions/register">
         <div class="title">
             Welcome,<br><span>register to continue</span>
@@ -8,10 +8,14 @@
         <input class="input" name="email" placeholder="Email" type="email">
         <input class="input" name="age" placeholder="Age" type="number">
         <input class="input" name="password" placeholder="Password" type="password">
+        <input type="radio" name="type_of_user" value="normal" checked>
+        <label for="normal">User normal</label><br>
+        <input type="radio"name="type_of_user" value="premium">
+        <label for="premium">User premium</label><br>
         <button class="button-confirm" type="submit">Register→</button>
-        {{#if failedRegister}}
-            <p style="color:red">hubo un error al registrarse</p>
+        {{#if redirected}}
+            <p class="failed-register">Hubo un error al registrarse. Asegurate de completar todos los campos con datos validos y que tu email sea válido y no asociado a una cuenta existente</p>
         {{/if}}
         <a href="http://localhost:8080/login">I already have an account</a>
     </form>
-{{/unless}}
+ 

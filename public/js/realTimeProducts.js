@@ -1,5 +1,7 @@
-const socket = io()
-
+const socket = io("http://localhost:8080", {
+    transports: ['websocket'], 
+    withCredentials: true 
+})
 const botonConfirmar = document.getElementById("button-confirm")
 const createProductsForm = document.getElementById("createProductsForm")
 const productsDiv = document.getElementById("products")
@@ -53,6 +55,8 @@ socket.on("getProducts", (data)=>{
 
         let productCard = document.createElement("div")
 
+        const buttonConditional = product.canModify ? `<button class="button-delete" data-productid=${product._id}>X</button>` : " "
+
         productCard.innerHTML = `<div class="card">
             <span>titulo: ${product.title}</span>
             <span>descripcion: ${product.description}</span>
@@ -62,7 +66,8 @@ socket.on("getProducts", (data)=>{
             <span>thumbnails: ${product.thumbnails}</span>
             <span>status: ${product.status}</span>
             <span>id: ${product._id}</span>
-            <button class="button-delete" data-productid=${product._id}>X</button>
+            <span>owner: ${product.owner}</span>
+            ${buttonConditional}
         </div>`
 
         productsDiv.appendChild(productCard)

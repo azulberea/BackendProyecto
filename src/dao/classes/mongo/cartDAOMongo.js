@@ -1,3 +1,7 @@
+import moment from "moment";
+import { fileURLToPath } from "url";
+
+import { defineLogger } from "../../../utils/logger.js";
 import { cartModel } from "../../models/cartModel.js";
 import { productController } from "../../../controllers/productController.js";
 
@@ -12,21 +16,18 @@ export default class CartService {
 
             if(!result){
 
-                //console.log("-CART SERVICE hubo un error creando el carrito")
-
                 return
 
             }
-
-            //console.log(`-CARTSERVICE carrito creado correctamente`)
 
             return result
         
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH error creando carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return 
+            return null
             
         }
 
@@ -38,16 +39,15 @@ export default class CartService {
 
             const result = await cartModel.find()
 
-            //console.log(`-CARTSERVICE carritos obtenidos exitosamente: ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH error obteniendo los carritos: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return 
-
+            return null
+            
         }
 
     }
@@ -58,16 +58,15 @@ export default class CartService {
 
             const result = await cartModel.findOne({_id:id})
 
-            //console.log(`-CARTSERVICE carrito obtenido por ID exitosamente: ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH error obteniendo carrito por su ID: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
     }
@@ -80,36 +79,42 @@ export default class CartService {
 
             const result = await cartRequired.products.find(product => product.product == productId)
 
-            //console.log(`-CARTSERVICE producto obtenido: ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH error obteniendo producto del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return 
-
+            return null
+            
         }
 
     }
 
-    async getAllProducts(cartId) { 
+    async getAllProducts(cartId, lean) { 
 
         try{
 
-            const result = await cartModel.findOne({_id:cartId}).populate("products.product").lean()
+            const resultNotLean = await cartModel.findOne({_id:cartId}).populate("products.product")
 
-            //console.log(`-CARTSERVICE productos obtenidos del carrito correctamente ${result.products}`)
+            const resultLean = await cartModel.findOne({_id:cartId}).populate("products.product").lean()
 
-            return result
+            if(lean == true){
+
+                return resultLean
+
+            }
+
+            return resultNotLean
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH hubo un error al obtener todos los productos del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
     }
@@ -138,18 +143,60 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId}, {$push: {products:{product: productId, quantity: 1}}})
 
-            //console.log(`-CARTSERVICE producto agregado al carrito correctamente`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH hubo un error al agregar el producto al carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
+    }
+
+
+    async incrementProductQuantity(cartId, productId) {
+
+        try {
+            
+                const result = await cartModel.findOneAndUpdate(
+                    { _id: cartId, "products.product": productId },
+                    { $inc: { "products.$.quantity": 1 } }
+                    )
+        
+                return result 
+
+        }catch(error){
+
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
+            
+        }
+    }
+
+    async decrementProductQuantity(cartId, productId) {
+
+        try{
+
+            const result = await cartModel.findOneAndUpdate(
+                { _id: cartId, "products.product": productId },
+                { $inc: { "products.$.quantity": -1 } }
+            )
+        
+            return result 
+
+        }catch(error){
+
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
+            
+        }
     }
 
     async deleteProduct(productId, cartId) {
@@ -157,17 +204,16 @@ export default class CartService {
         try{
 
             const result = await cartModel.updateOne({_id:cartId, "products.product": productId},{$pull: { products: {product: productId }}})
-
-            //console.log(`-CARTSERVICE producto eliminado del carrito exitosamente ${result}`)
             
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH no se ha podido eliminar el producto del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
     }
 
@@ -177,16 +223,15 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId},{products:[]})
 
-            //console.log(`-CARTSERVICE productos eliminados del carrito correctamente ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH no se han podido eliminar los productos del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
     }
@@ -197,16 +242,15 @@ export default class CartService {
 
             const result = await cartModel.deleteOne({_id: id})
 
-            //console.log(`-CARTSERVICE carrito eliminado correctamente ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH hubo un error al eliminar el carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
     }
@@ -217,16 +261,15 @@ export default class CartService {
 
             const result = await cartModel.updateOne({_id:cartId, "products.product": productId},{$set: {"products.$.quantity":quantity} })
 
-            //console.log(`-CARTSERVICE cantidad actualizada correctamente`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH no se pudo actualizar la cantidad del producto: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
     }
@@ -237,16 +280,15 @@ export default class CartService {
 
             const result = cartModel.updateOne({_id:cartId},{products:products})
 
-            //console.log(`-CARTSERVICE todos los productos del carrito se han actualizado correctamente ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTSERVICE CATCH no se han podido actualizar todos los productos del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
-
+            return null
+            
         }
 
     }

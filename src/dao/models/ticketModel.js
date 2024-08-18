@@ -15,9 +15,26 @@ const ticketSchema = mongoose.Schema({
     cart:{
         type: mongoose.Schema.ObjectId,
         ref: "carts",
-        require: true
-    }
-    ,
+        require: true,
+    },
+    products:{
+        type:[
+            {
+                product:{
+                    type: String
+                },
+                quantity:{
+                    type: Number
+                },
+                _id:{
+                    type: mongoose.Schema.ObjectId
+                },
+                price:{
+                    type: Number
+                }
+            }
+        ]
+    },
     amount:{
         type: Number,
         require: true,

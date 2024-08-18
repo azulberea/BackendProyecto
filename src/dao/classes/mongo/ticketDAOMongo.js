@@ -1,3 +1,7 @@
+import moment from "moment";
+import { fileURLToPath } from "url";
+
+import { defineLogger } from "../../../utils/logger.js";
 import ticketModel from "../../models/ticketModel.js";
 
 export default class TicketService {
@@ -12,11 +16,30 @@ export default class TicketService {
 
         }catch(error){
 
-            console.log(error.message)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
             return null
-
+            
         }
 
+    }
+
+    async get(ticketId){
+
+        try{
+
+            const result = await ticketModel.findOne({_id:ticketId}).lean()
+
+            return result
+
+        }catch(error){
+
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
+            
+        }
     }
 }

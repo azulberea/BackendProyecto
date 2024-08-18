@@ -1,7 +1,42 @@
-const socket = io()
+const socket = io("http://localhost:8080", {
+    transports: ['websocket'], 
+    withCredentials: true 
+})
 
 const productsDiv = document.getElementById("products")
 const productsHandlebarsDiv = document.getElementById("productsHandlebars")
+const checkoutButton = document.getElementById("button-checkout")
+
+checkoutButton.addEventListener("click", async (e)=> {
+
+    e.preventDefault()
+
+    const cartId = checkoutButton.dataset.cartid
+    
+    const purchaser = checkoutButton.dataset.purchaser
+
+    const data = {
+        purchaser
+    }
+
+    try{
+
+        await fetch(`/api/carts/${cartId}/purchase`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body:  JSON.stringify(data)
+        })
+
+        window.location.replace("http://localhost:8080/successfulPurchase")
+
+    }catch(error){
+
+        console.log(error)
+
+    }
+})
 
 productsDiv.addEventListener("click", (e)=>{
 
@@ -47,6 +82,8 @@ socket.on("getProductsFromCart", (data)=>{
         <h1>CARRITO VACÍO</h1>
         <a href="http://localhost:8080/products">volver a productos</a>
     </div>`
+        
+    checkoutButton.remove()
     }
 
     

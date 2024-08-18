@@ -1,15 +1,19 @@
 import { Router } from "express";
-import { cartController } from "../controllers/cartController.js";
-import ticketModel from "../dao/models/ticketModel.js";
 import moment from "moment";
+import { fileURLToPath } from "url";
+import jwt from "jsonwebtoken"
+
+import { cartController } from "../controllers/cartController.js";
 import { ticketController } from "../controllers/ticketController.js";
-// import CustomError from "../services/errorService/CustomError.js";
-// import { idErrorInfo } from "../services/errorService/info.js";
-// import EErrors from "../services/errorService/enums.js";
+import { passportCall } from "../utils/passportUtils.js";
+import { roleAuth } from "../middlewares/auth.js";
+import config from "../config/config.js";
 
 const router = Router()
 
-router.post("/", async (req, res) => {
+const { jwtSecretKey } = config
+
+router.post("/", async (req, res) => { 
 
     try{
         
@@ -18,27 +22,31 @@ router.post("/", async (req, res) => {
         if(!result){
 
             return res.status(500).send({
-                status: "error",
-                message: "Hubo un error al crear el carrito :("
+                status: "Error",
+                payload: "Hubo un error al crear el carrito :("
             })
 
         }
 
         return res.status(201).send({
-            status: "success",
-            message: `Carrito creado correctamente: ${result}`})
+            status: "Success",
+            payload: `${result}`
+        })
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.status(500).send({status: "Error",
+            payload: error.message
+        })
 
     }
 
 })
 
-router.post("/:cartid/products/:productid", async (req, res)=>{
+router.post("/:cartid/products/:productid", async (req, res)=>{ 
         
     const productId = req.params.productid
 
@@ -50,30 +58,32 @@ router.post("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            // CustomError.createError({
-            //     name: "Error getting resource",
-            //     cause: idErrorInfo(productId, cartId),
-            //     message: "Error trying to get product or cart requires",
-            //     code: EErrors.INEXISTENT_RESOURCE
-            // })
-return
+            return res.status(400).send({
+                status: "Error",
+                payload: `Error obteniendo producto ${productId} o carrito ${cartId}`
+            })
+
         }
 
         return res.status(200).send({
-            status: "success",
-            message:`El producto ${productId} fue añadido correctamente al carrito ${cartId}`})
+            status: "Success",
+            payload:`El producto ${productId} fue añadido correctamente al carrito ${cartId}`
+        })
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.status(500).send({status: "Error",
+            payload: error.message
+        })
 
     }
 
 })
 
-router.get("/", async (req, res)=>{
+router.get("/", async (req, res)=>{ 
 
     try{
 
@@ -82,67 +92,68 @@ router.get("/", async (req, res)=>{
         if(!result){
 
             return res.status(500).send({
-                status: "error",
-                message:"Hubo un error al obtener los carritos"})
+                status: "Error",
+                payload:"Hubo un error al obtener los carritos"
+            })
 
         }
 
         return res.status(200).send({
-            status: "success",
-            message: `Carritos: ${result}`
+            status: "Success",
+            payload: result
         })
 
     }catch(error){
 
-        return res.status(500).send({
-            status: "error",
-            message: "Hubo un error al obtener los carritos"
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
+
+        return res.status(500).send({status: "Error",
+            payload: error.message
         })
 
     }
 
-
 })
 
-router.get("/:cartid", async (req, res)=>{
-
+router.get("/:cartid", async (req, res)=>{ 
     const cartId = req.params.cartid
 
     try{
 
-        const result = await cartController.getAllCartProducts(cartId)
+        const result = await cartController.getAllCartProducts(cartId, false)
 
         if(!result){
 
-            // CustomError.createError({
-            //     name: "Error getting cart",
-            //     cause: idErrorInfo(cartId),
-            //     message: "Error trying to get cart",
-            //     code: EErrors.INEXISTENT_RESOURCE
-            // })
-            return
+            return res.status(400).send({
+                status: "Error",
+                payload: `Hubo un error obteniendo los productos del carrito ${cartId}`
+            })
 
         }
 
         if(result == "empty"){
 
             return res.status(200).send({
-                status: "success",
-                message: "El carrito esta vacío"
+                status: "Success",
+                payload: result
             })
 
         }
 
         return res.status(200).send({
-            status: "success",
-            message: `Productos del carrito ${cartId} obtenidos exitosamente: ${result.products}`
+            status: "Success",
+            payload: `${result.products[0]}`
         })
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.status(500).send({status: "Error",
+            payload: error.message
+        })
 
     }
 })
@@ -159,32 +170,32 @@ router.delete("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            // CustomError.createError({
-            //     name: "Error getting resources",
-            //     cause: getProductByIdErrorInfo(productId, cartId),
-            //     message: "Error trying to get resources",
-            //     code: EErrors.INEXISTENT_RESOURCE
-            // })
-            return
+            return res.status(400).send({
+                status: "Error",
+                payload: `Hubo un error. Asegurate de que el producto no pertenezca al propietario del carrito y que el producto ${productId} o el carrito ${cartId} existan `
+            })
 
         }
 
         return res.status(200).send({
-            status: "success",
-            message: "Producto eliminado del carrito exitosamente"
+            status: "Success",
+            payload: result
         })
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.status(500).send({status: "Error",
+            payload: error.message
+        })
 
     }
 
 })
 
-router.delete("/:cartid", async (req, res)=>{
+router.delete("/:cartid", async (req, res)=>{ 
 
     const cartId = req.params.cartid
 
@@ -194,32 +205,32 @@ router.delete("/:cartid", async (req, res)=>{
 
         if(!result){
 
-            // CustomError.createError({
-            //     name: "Error getting cart",
-            //     cause: getProductByIdErrorInfo(cartId),
-            //     message: "Error trying to get cart",
-            //     code: EErrors.INEXISTENT_RESOURCE
-            // })
-            return
+            return res.status(400).send({
+                status: "Error",
+                payload: `Hubo un error eliminando los productos del carrito ${cartId}`
+            })
 
         }
 
         return res.status(200).send({
-            status: "success",
-            message: "Todos los productos han sido eliminados del carrito"
+            status: "Success",
+            payload: result
         })
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.status(500).send({status: "Error",
+            payload: error.message
+        })
 
     }
 
 })
 
-router.put("/:cartid/products/:productid", async (req, res)=>{
+router.put("/:cartid/products/:productid", async (req, res)=>{ //EN DESUSO
 
     const cartId = req.params.cartid
 
@@ -233,107 +244,130 @@ router.put("/:cartid/products/:productid", async (req, res)=>{
 
         if(!result){
 
-            // CustomError.createError({
-            //     name: "Error getting resource",
-            //     cause: iddErrorInfo(productId, cartId),
-            //     message: "Error trying to get resource",
-            //     code: EErrors.INEXISTENT_RESOURCE
-            // })
-            return
+            return res.status(400).send({
+                status: "Error",
+                payload: `No se pudo actualizar el producto ${productId} en el carrito ${cartId}`
+            })
         }
 
         if(result.modifiedCount == 0){
 
-            // CustomError.createError({
-            //     name: "Internal server error",
-            //     cause: getProductByIdErrorInfo(id),
-            //     message: "Unacknowledged changes",
-            //     code: EErrors.INTERNAL_SERVER_ERROR
-            // })
-            return
+            req.logger.warning(`No se pudo actualizar el producto ${productId} del carrito ${cartId}`)
+
+            return res.status(500).send({
+                status: "Error",
+                payload: `Error interno el intentar actualizar el producto ${productId} del carrito ${cartId}`
+            })
 
         }
 
         return res.status(200).send({
-            status: "success",
-            message:"Se ha actualizado el carrito correctamente"})
+            status: "Success",
+            payload: result
+        })
 
     }catch(error){
 
-        console.log(error)
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
 
-        return res.send(error)
+        return res.status(500).send({status: "Error",
+            payload: error.message
+        })
 
     }
 
 })
 
-router.post("/:cartid/purchase", async (req, res) => {
+router.post("/:cartid/purchase", async (req, res) => { 
 
     const cartId = req.params.cartid
 
-    const {purchaser} = req.body
+    const { purchaser } = req.body
 
     try{
 
         const result = await ticketController.addTicket(cartId, purchaser)
 
-        return res.status(200).send({
-            result
-        })
-
-    }catch(error){
-
-        console.log(error)
-
-        return res.send(error)
-
-    }
-})
-
-router.put("/:cartid", async (req, res)=>{ //NO FUNCIONA, IGUAL PENSABA ELIMINAR ESTA RUTA PORQUE NO ME PARECE MUY UTIL
-
-    const cartId = req.params.cartid
-
-    const {products} = req.body 
-
-    try{
-
-        const result = await cartController.updateCartProducts(cartId, products)
-
         if(!result){
 
-            return res.status(400).send({
-                status: "error",
-                message:"Hubo un error al actualizar el carrito. Asegurese de que exista un carrito con ese ID"
+            return res.status(500).send({
+                status: "Error",
+                payload: "No se pudo generar el ticket de compra"
             })
 
         }
 
-        if(result.modifiedCount == 0){
-            
-            return res.status(400).send({
-                status: "error",
-                message: "Hubo un error al actualizar el carrito"
-            })
+        const ticket = await ticketController.getTicket(result._id)
 
-        }
+        let purchaseToken = jwt.sign(ticket, jwtSecretKey, {expiresIn: "10m"})
 
-        return res.status(200).send({
-            status: "success",
-            message:`Carrito actualizado correctamente`
+        res.cookie("purchaseToken", purchaseToken, {
+            maxAge: 600000,
+            httpOnly: true
+        }).send({
+            status: "Success",
+            payload: ticket
         })
 
     }catch(error){
 
+        req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+        message: ${error.message}`)
+
         return res.status(500).send({
-            status: "error",
-            message: `Hubo un error al actualizar los productos del carrito: ${error.message}`
+            status: "Error",
+            payload: error.message
         })
 
     }
-
 })
+
+// router.put("/:cartid", async (req, res)=>{ NO FUNCIONA, IGUAL PENSABA ELIMINAR ESTA RUTA PORQUE NO ME PARECE MUY UTIL
+
+//     const cartId = req.params.cartid
+
+//     const {products} = req.body 
+
+//     try{
+
+//         const result = await cartController.updateCartProducts(cartId, products)
+
+//         if(!result){
+
+//             return res.status(400).send({
+//                 status: "Error",
+//                 message:"Hubo un error al actualizar el carrito. Asegurese de que exista un carrito con ese ID"
+//             })
+
+//         }
+
+//         if(result.modifiedCount == 0){
+            
+//             return res.status(400).send({
+//                 status: "Error",
+//                 message: "Hubo un error al actualizar el carrito"
+//             })
+
+//         }
+
+//         return res.status(200).send({
+//             status: "Success",
+//             message:`Carrito actualizado correctamente`
+//         })
+
+//     }catch(error){
+
+//         req.logger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+//         message: ${error.message}`)
+
+//         return res.status(500).send({status: "Error",
+//             payload: error.message
+//         })
+
+//     }
+
+// })
 
 
 

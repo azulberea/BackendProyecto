@@ -2,6 +2,7 @@
 <header>
     <a href="http://localhost:8080/profile">profile</a>
     <a href="http://localhost:8080/products">products</a>
+    <a href="http://localhost:8080/realTimeProducts">product admin</a>
     <a href={{cartURL}}>cart</a>
 </header>
     <div class="products" id="products">
@@ -28,6 +29,9 @@
     {{/unless}}
         </div>
     </div>
+    {{#if products }}
+        <button id="button-checkout" data-cartid={{cart}} data-purchaser={{email}}> COMPRAR </button>
+    {{/if}}
 
 
 <script src="/socket.io/socket.io.js"></script>

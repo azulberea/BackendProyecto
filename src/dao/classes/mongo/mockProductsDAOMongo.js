@@ -1,3 +1,7 @@
+import moment from "moment";
+import { fileURLToPath } from "url";
+
+import { defineLogger } from "../../../utils/logger.js";
 import { mockProductModel } from "../../models/mockProductModel.js";
 
 export default class MockProductService {
@@ -12,10 +16,11 @@ export default class MockProductService {
 
         }catch(error){
 
-            console.log(error.message)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
             return null
-
+            
         }
 
     }
@@ -30,10 +35,11 @@ export default class MockProductService {
 
         }catch(error){
 
-            console.log(error.message)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
             return null
-
+            
         }
 
     }

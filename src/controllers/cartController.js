@@ -1,6 +1,11 @@
-import CartService from "../dao/classes/mongo/cartDAOMongo.js"
-import { cartModel } from "../dao/models/cartModel.js"
-import { productController } from "./productController.js"
+import moment from "moment";
+import {fileURLToPath} from "url";
+
+import { defineLogger } from "../utils/logger.js";
+import { cartModel } from "../dao/models/cartModel.js";
+import CartService from "../dao/classes/mongo/cartDAOMongo.js";
+import { productController } from "./productController.js";
+import { userController } from "./userController.js";
 
 export class CartController{
 
@@ -16,15 +21,14 @@ export class CartController{
 
             const result = await this.cartService.add()
 
-            //console.log(`-CARTCONTROLLER carrito creado correctamente`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al crear el carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
+            return null
 
         }
 
@@ -38,21 +42,21 @@ export class CartController{
 
             if(!result){
 
-                //console.log(`-CARTCONTROLLER hubo un error obteniendo todos los carritos`)
+                defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: hubo un error obteniendo todos los carritos (no result)`)
 
                 return
 
             }
 
-            //console.log(`-CARTCONTROLLER carritos obtenidos correctamente: ${result }`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al obteneer los carritos: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
+            return null
 
         }
 
@@ -66,21 +70,20 @@ export class CartController{
 
             if(!result){
 
-                //console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
+                defineLogger.info(`No existe un carrito con ese ID (${id})`)
 
                 return
 
             }
 
-            //console.log(`-CARTCONTROLLER carrito obtenido correctamente ${result}`)
-
             return result
         
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al obtener el carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
+            return null
 
         }
 
@@ -94,7 +97,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                //console.log(`-CARTCONTROLLER no existe un carrito con ese id`)
+                defineLogger.info(`No existe un carrito con ese ID  XD(${cartId})`)
 
                 return
 
@@ -104,45 +107,45 @@ export class CartController{
 
             if(!result){
 
-                //console.log(`-CARTCONTROLLER no existe un producto con ese ID en el carrito`)
+                // defineLogger.info(`No existe un producto con ese ID (${productId}) en el carrito (${cartId})`)
 
                 return
 
             }
 
-            //console.log(`-CARTCONTROLLER producto obtenido del carrito exitosamente ${result}`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error obteniendo el producto del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return 
+            return null
 
         }
 
     }
 
-    async getAllCartProducts(cartId) { //FUNCIONA
+    async getAllCartProducts(cartId, lean) { //FUNCIONA
 
         try{
 
-            const result = await this.cartService.getAllProducts(cartId)
-
-            //console.log(`-CARTCONTROLLER productos obtenidos del carrito exitosamente ${result}`)
+            const result = await this.cartService.getAllProducts(cartId, lean)
 
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al obtener los productos del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
 
     }
 
-    async addProductToCart(productId, cartId) { //FUNCIONA PERO NO FUNCIONA LA PARTE DE INCREMENTAR EN UNO SI YA ESTA EN EL CARRITO. CREAR FUCNION APARTE EN CART SERVICE PARA INCREMENTAR EN 1
+    async addProductToCart(productId, cartId) { 
 
         try{
 
@@ -152,27 +155,26 @@ export class CartController{
 
             if(!cartRequired || !productRequired){
 
-                //console.log(`-CARTCONTROLLER hubo un error al agregar el producto al carrito. asegurate de que exista un producto y un carrito con esos ID`)
+                defineLogger.info(`Producto ${productId} o carrito ${cartId} inexistente`)
 
                 return
 
             }
 
-            // const productInCart = cartRequired.products.find(prod => prod.product == productId)
-
-            // if(productInCart){
-
-            //     let quantity = productInCart.quantity
-                        
-            //     const result = this.cartService.updateProductQuantity(cartId, productId, quantity++)
-                
-            //     //console.log(`-CARTCONTROLLER se ha incrementado el producto en 1`)
-
-            //     return result
-
-            // }
 
             if(productRequired.stock == 0){
+
+                defineLogger.info(`Producto ${productId} sin stock`)
+
+                return null
+
+            }
+
+            const productOwner = await userController.getUserByEmail(productRequired.owner)
+
+            if(cartId == productOwner.cart){
+                
+                defineLogger.info(`No se puede agregar al carrito un producto propio`)
 
                 return null
 
@@ -180,15 +182,14 @@ export class CartController{
 
             const result = await this.cartService.addProduct(productId, cartId)
 
-            //console.log(`-CARTCONTROLLER producto agregado al carrito correctamente`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error agregando el prodcuto al carrito o incrementandolo en 1: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
+            return null
 
         }
 
@@ -202,7 +203,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                //console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
+                defineLogger.info(`No existe un carrito con ese ID (${cartId})`)
 
                 return
 
@@ -212,7 +213,7 @@ export class CartController{
 
             if(!productRequired){
 
-                //console.log(`-CARTCONTROLLER este producto no esta en el carrito`)
+                defineLogger.info(`Producto inexistente en el carrito`)
 
                 return
 
@@ -222,7 +223,8 @@ export class CartController{
 
             if(result.modifiedCount == 0){
 
-                //console.log(`-CARTCONTROLLER no se elimino el producto del carrito`)
+                defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                message: No se pudo eliminar el producto del carrito`)
                 
                 return
 
@@ -232,9 +234,10 @@ export class CartController{
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al eliminar el producto del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return
+            return null
 
         }
     }
@@ -247,7 +250,7 @@ export class CartController{
 
             if(!validateCart){
 
-                //console.log(`-CARTCONTROLLER asegurate de que exista un carrito con ese ID`)
+                defineLogger.info(`No existe un carrito con ese ID (${cartId})`)
 
                 return 
             
@@ -255,15 +258,15 @@ export class CartController{
 
             const result = await this.cartService.deleteAllProducts(cartId)
 
-            //console.log(`-CARTCONTROLLER todos los productos han sido eliminados del carrito`)
 
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al intentar eliminar todo slos productos del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
 
-            return 
+            return null
 
         }
     }
@@ -276,7 +279,7 @@ export class CartController{
 
             if(!validateCart){
 
-                //console.log(`-CARTCONTROLLER no existe un carrito con ese ID`)
+                defineLogger.info(`No existe un carrito con ese ID (${cartId})`)
 
                 return
 
@@ -286,19 +289,20 @@ export class CartController{
 
             if(result.deletedCount == 0){
 
-                //console.log(`-CARTCONTROLLER hubo un error eliminando el carrito`)
+                defineLogger.info(`Hubo un error eliminando el carrito`)
 
                 return
 
             }
 
-            //console.log(`-CARTCONTROLLER carrito eliminado correctamente`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al eliminar el carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
     }
@@ -311,7 +315,7 @@ export class CartController{
 
             if(!cartRequired){
 
-                //console.log("-CARTCONTROLLER carrito inexistwente")
+                defineLogger.info(`No existe un carrito con ese ID (${cartId})`)
 
                 return
 
@@ -321,7 +325,7 @@ export class CartController{
 
             if(!productInCart){
 
-                //console.log(`-CARTCONTROLLER ese producto no esta en el carrito`)
+                defineLogger.info(`No existe un producto con el ID ${productId} en el carrito ${cartId}`)
 
                 return 
 
@@ -329,21 +333,14 @@ export class CartController{
 
             const result = await this.cartService.updateProductQuantity(cartId, productId, quantity)
 
-            // if(result.modifiedCount == 0){
-
-            //     //console.log(`-CARTCONTROLLER hubo un error modificando el producto`)
-
-            //     return
-
-            // }
-
-            //console.log(`-CARTCONTROLLER cantidad modificada correctamente`)
-
             return result
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al modificar la cantidad: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
 
@@ -371,7 +368,11 @@ export class CartController{
 
         }catch(error){
 
-            //console.log(`-CARTCONTROLLER CATCH hubo un error al actualizar los productos del carrito: ${error.message}`)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
+
         }
 
     }
@@ -392,28 +393,74 @@ export class CartController{
 
         }catch(error){
 
-            console.log(error.message)
+            defineLogger.error(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+            message: ${error.message}`)
+
+            return null
 
         }
 
     }
 
-    // async incrementProductByOne(cartId, productId) {
+    async incOrDecProductQuantity(cartId, productId, operation) {
 
-    //     try{
+        try{
 
-    //         const result = await this.cartService.incrementProductByOne(cartId, productId)
+            if(operation != "inc" && operation != "dec") {
 
-    //         return result
+                throw new Error(`Elije un operacion valida ("inc": incrementar. "dec": decrementar)`)
+                // defineLogger.warning(`level ERROR at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
+                // message: Elije un operacion valida ("inc": incrementar. "dec": decrementar)`)
 
-    //     }catch(error) {
+                // return null
 
-    //         console.log(error.message)
+            }
+
+            if(operation == "inc") {
+
+                const product = await productController.getProductById(productId)
+
+                const productStock = product.stock
+
+                const productInCart = await this.cartService.getProductFromCart(productId, cartId)
+
+                if( productStock == productInCart.quantity){
+
+                    throw new Error("No se puede incrementar la cantidad del producto porque no hay suficiente stock")
+
+                }
+
+                const result = await this.cartService.incrementProductQuantity(cartId, productId)
+
+                return await this.cartService.getById(cartId)
+
+            }
+
+            if(operation == "dec") {
+
+                const productInCart = await this.cartService.getProductFromCart(productId, cartId)
+
+                if(productInCart.quantity == 1){
+
+                    const result = await this.cartService.deleteProduct(productId, cartId)
+
+                    return await this.cartService.getById(cartId)
+
+                }
+
+                const result = await this.cartService.decrementProductQuantity(cartId, productId)
+
+                return await this.cartService.getById(cartId)
+            }
+
+        }catch(error) {
+
+            console.log(error.message)
             
-    //         return null
+            return null
         
-    //     }
-    // }
+        }
+    }
 
 }
 

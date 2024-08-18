@@ -1,4 +1,7 @@
-const socket = io()
+const socket = io("http://localhost:8080", {
+    transports: ['websocket'], 
+    withCredentials: true 
+})
 
 const productsDiv = document.getElementById("products")
 
@@ -11,6 +14,15 @@ productsDiv.addEventListener("click", (e)=>{
         socket.emit("addToCart", productId)
 
     }
+})
+
+socket.on("productOwned", data=>{
+    Toastify({
+        text: `Eres el propietario de este producto (${data._id}), no se puede añadir al carrito.`,
+        gravity: "bottom",
+        position: "right",
+        duration: 3000
+    }).showToast()
 })
 
 socket.on("unavailableProduct", data=>{

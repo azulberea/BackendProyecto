@@ -1,46 +1,43 @@
-export const auth = (req, res, next)=>{
+// tratar de poner los dos middlewares en uno
 
-    if(!req.session.user){
+export const roleAuth = (role) => {
 
-        return res.redirect("/login")
+    return async (req, res, next) => {
 
+        if(!req.user) return res.status(401).send({status:"Error",
+            payload:"Unauthenticated"})
+
+        if(req.user.role != role && role != "all"){
+
+            return res.status(403).send({status: "Error",
+            payload: "Unauthorized"
+            })
+
+        }         
+
+        next()
+        
     }
-
-    return next()
 
 }
 
-export const authLogged = (req, res, next)=>{
+export const premiumAuth = () => {
 
-    if(req.session.user){
+    return async (req, res, next) => {
 
-        return res.redirect("/profile")
+        if(!req.user) return res.status(401).send({status:"Error",
+            payload:"Unauthenticated"})
 
+        if(!req.user.premium){
+
+            return res.status(403).send({status: "Error",
+            payload: "No autorizado. Debes ser premium para acceder a esta ruta"
+            })
+
+        }         
+
+        next()
+        
     }
 
-    return next()
-    
-}
-
-export const authAdmin = (req, res, next)=>{
-
-    if(req.session.user.role == "user"){
-
-        return res.redirect("/products")
-
-    }
-
-    return next()
-}
-
-export const authUser = (req, res, next)=> {
-
-    if(req.session.user.role == "admin"){
-
-        return res.redirect("/realTimeProducts")
-
-    }
-
-    return next()
-    
 }

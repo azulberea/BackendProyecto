@@ -29,6 +29,13 @@ const productSchema = new mongoose.Schema({
         require: false,
         default: true
     },
+    owner:{
+        type: String,
+        ref: "users",
+        require: false,
+        default: "adminCoder@coder.com"
+    }
+    ,
     thumbnails:{
         type: Array,
         require: false,
