@@ -137,7 +137,7 @@ export class ProductController {
                 defineLogger.info(`level INFO at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
                 message: No hay productos existentes`)
 
-                return
+                return result
 
             }
 

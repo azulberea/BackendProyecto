@@ -79,10 +79,23 @@ export default (io)=> io.on("connection", socket => {
                 })
 
             }
+            
+            const owner = socket.user.email
+
+            const isAdmin = socket.user.role == "admin"
 
             const products = await productController.getProducts()
 
-            socket.emit("getProducts", products)
+            const productsWithPermissions = products.map( product=>{
+    
+                return {...product,
+                    canModify: product.owner == owner || isAdmin,
+                    owner
+                }
+    
+            })
+
+            socket.emit("getProducts", productsWithPermissions)
 
         }catch(error){
 

@@ -11,6 +11,7 @@ import { userController } from "../controllers/userController.js";
 import { createHash } from "../utils/functionUtils.js";
 import userModel from "../dao/models/userModel.js";
 import userDTO from "../dao/dto/userDTO.js";
+import { cartController } from "../controllers/cartController.js";
 
 const router = Router()
 
@@ -127,6 +128,12 @@ router.delete("/:uid", async (req, res) => {
     try{
 
         const userId = req.params.uid
+
+        const user = await userController.getUserById(userId)
+
+        const cart = user.cart
+
+        await cartController.deleteCart(cart)
 
         const result = await userController.deleteUser(userId)
 

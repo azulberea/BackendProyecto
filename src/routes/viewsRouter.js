@@ -25,14 +25,12 @@ router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAut
 
         const isAdmin = user.role == "admin"
 
-        const userEmail = user.email
-
         let result = await productController.getProducts()
 
         const productsWithPermissions = result.map( product=>{
             
             return {...product,
-                canModify: product.owner == userEmail || isAdmin
+                canModify: product.owner == user.email || isAdmin
             }
 
         })
@@ -43,7 +41,8 @@ router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAut
 
                 cartURL: `http://localhost:8080/carts/${user.cart}`,
                 products: productsWithPermissions,
-                style: "styles.css"
+                style: "styles.css",
+                isAdmin: req.user.role == "admin" || false
 
             })
 
@@ -97,7 +96,7 @@ router.get("/products", passportCall("jwt"), roleAuth("all"), async (req, res)=>
             products: result.docs,
             previousPage: result.hasPrevPage ? result.prevPage : result.page,
             nextPage: result.hasNextPage ? result.nextPage : result.page,
-            isAdmin: user.role == "admin" ? true : false
+            isAdmin: req.user.role == "admin" || false
 
         })
 
@@ -133,7 +132,9 @@ router.get("/carts/:cartid", passportCall("jwt"), roleAuth("user"), async (req, 
             style: "styles.css",
             products: result.products,
             cart: req.user.cart,
-            email: req.user.email
+            email: req.user.email,
+            cartURL: `http://localhost:8080/carts/${req.user.cart}`,
+            isAdmin: req.user.role == "admin" || false
 
         }) 
 
@@ -247,7 +248,8 @@ router.get("/profile", passportCall("jwt"), roleAuth("all"), async (req, res)=>{
             age: req.user.age,
             role: req.user.role,
             membership: req.user.premium ? "premium" : "normal",
-            id: req.user._id
+            id: req.user._id,
+            isAdmin: req.user.role == "admin" || false
         })
 
     }catch(error){
@@ -356,7 +358,9 @@ router.get("/successfulPurchase", passportCall("jwt"), async (req, res) => {
             expires: new Date(0)
         }).render("successfulPurchase",{
             style: "styles.css",
-            code: decoded.code
+            code: decoded.code,
+            cartURL: `http://localhost:8080/carts/${req.user.cart}`,
+            isAdmin: req.user.role == "admin" || false
         })
 
     }catch(error){

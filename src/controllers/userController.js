@@ -300,7 +300,6 @@ export class UserController {
             return 
 
             }
-            console.log(result, "controller")
             
             return result
 

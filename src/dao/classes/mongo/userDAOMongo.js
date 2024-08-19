@@ -176,8 +176,6 @@ export default class UserService {
 
             const result = userModel.findByIdAndDelete(userId)
 
-            console.log(result, "dao")
-
             return result
 
         }catch(error){

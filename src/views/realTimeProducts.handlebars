@@ -2,7 +2,12 @@
     <a href="http://localhost:8080/profile">profile</a>
     <a href="http://localhost:8080/products">products</a>
     <a href="http://localhost:8080/realTimeProducts">product admin</a>
+    {{#unless isAdmin}}
     <a href={{cartURL}}>cart</a>
+    {{/unless}}
+    {{#if isAdmin}}
+        <a href="http://localhost:8080/adminDashboard/users">admin dashboard</a>
+    {{/if}}
 </header>
 <form class="form" id="createProductsForm">
     <div class="title">
