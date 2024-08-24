@@ -7,10 +7,10 @@ import { createProduct } from "../utils/functionUtils.js";
 import { transport } from "../utils/nodemailerUtils.js";
 import config from "../config/config.js";
 
-const {senderEmail } = config
+const { senderEmail } = config
 const router = Router()
 
-router.get("/", async (req, res) => {  //EN DESUSO
+router.get("/", async (req, res) => { 
 
     let { limit, page, sort, category, status } = req.query
 
@@ -116,7 +116,7 @@ router.get("/product/:productid", async (req, res) => { //EN DESUSO
 
 })
 
-router.post("/", async (req, res) => { //EN DESUSO. PROBAR SI PUEDO ITULIZARLA EN EL FORM DE ADD PRODUCT
+router.post("/", async (req, res) => { 
     
     const { title, description, price, stock, category, status, owner, thumbnails } = req.body
     
@@ -213,7 +213,8 @@ router.delete("/product/:productid", async (req, res) => {
 
         }
 
-        await transport.sendMail({
+        if(owner != "adminCoder@coder.com"){
+            await transport.sendMail({
             from: `Beyond Supplements <${senderEmail}>`,
             to: owner,
             subject: "Producto eliminado",
@@ -221,11 +222,13 @@ router.delete("/product/:productid", async (req, res) => {
                         <h1>Uno de tus productos ha sido eliminado</h1>
                         <p>Se ha eliminado tu producto "${productToDelete.title}" de nuestro catálogo. Para mas informacion contactanos. </p>
                     </div>`
-        })
+            })
+        }
+        
 
         return res.status(200).send({
             status: "Success",
-            payload: "Producto eliminado correctamente"
+            payload: result
         })
 
     }catch(error){
@@ -241,8 +244,8 @@ router.delete("/product/:productid", async (req, res) => {
 
 })
 
-router.get("/title/:title", async (req, res) => { //EN DESUSO
-
+router.get("/title/:title", async (req, res) => { 
+    
     const { title } = req.params
 
     try{

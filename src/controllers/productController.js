@@ -63,17 +63,6 @@ export class ProductController {
             return
 
         }
-
-        const productOwner = await userController.getUserByEmail(owner)
-
-        if(!productOwner || !productOwner.premium){
-
-            defineLogger.warning(`level WARNING at ${fileURLToPath(import.meta.url)} on ${moment().format('MMMM Do YYYY, h:mm:ss a')}
-            message: Para crear el producto debes tener una cuenta registrada en nuestra base de datos y ser premium`)
-
-            return
-
-        }
         
         const result = await this.prodService.add({
                 title,
@@ -83,7 +72,7 @@ export class ProductController {
                 category,
                 status,
                 owner: owner ?? "adminCoder@coder.com", 
-                thumbnails: thumbnails
+                thumbnails
             })
 
             return result
