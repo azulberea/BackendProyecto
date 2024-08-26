@@ -67,8 +67,8 @@ router.get("/", async (req, res) => {
             page: result.page,
             hasPrevPage: result.hasPrevPage,
             hasNextPage: result.hasNextPage,
-            prevLink: result.hasPrevPage ? `http://localhost:8080/api/products?page=${products.prevPage}` : null,
-            nextLink: result.hasNextPage ? `http://localhost:8080/api/products?page=${products.nextPage}` : null
+            prevLink: result.hasPrevPage ? `/api/products?page=${products.prevPage}` : null,
+            nextLink: result.hasNextPage ? `/api/products?page=${products.nextPage}` : null
         })
 
     }catch(error){

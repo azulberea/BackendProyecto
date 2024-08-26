@@ -153,7 +153,7 @@ router.post("/restoreEmail", async (req, res) => {
             })
 
         }
-        
+
         const restoreId = crypto.randomBytes(20).toString('hex')
         
         let token = jwt.sign({userId: user._id, restoreId}, jwtSecretKey, {expiresIn: "15m"})
@@ -164,7 +164,7 @@ router.post("/restoreEmail", async (req, res) => {
             subject: "Restauracion de contraseña",
             html: ` <div>
                         <h1>Restauracion de contraseña</h1>
-                        <p>Se ha solicitado un reestablecimiento de contraseña. <a href="http://localhost:8080/confirmPasswordRestore/${restoreId}">Has click aquí</a> para ser redirigido al sitio y reestablecer tu contraseña. Si no has solicitado un reestablecimiento, por favor ignora este mail</p>
+                        <p>Se ha solicitado un reestablecimiento de contraseña. <a href="https://beyond-supplements.onrender.com/confirmPasswordRestore/${restoreId}">Has click aquí</a> para ser redirigido al sitio y reestablecer tu contraseña. Si no has solicitado un reestablecimiento, por favor ignora este mail</p>
                     </div>`
         })
 
