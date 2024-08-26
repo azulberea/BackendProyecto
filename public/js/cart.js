@@ -1,4 +1,6 @@
-const socket = io("http://localhost:8080", {
+const port = window.location.port
+
+const socket = io(`http://localhost:${port}`, {
     transports: ['websocket'], 
     withCredentials: true 
 })
@@ -29,7 +31,7 @@ checkoutButton.addEventListener("click", async (e)=> {
             body:  JSON.stringify(data)
         })
 
-        window.location.replace("http://localhost:8080/successfulPurchase")
+        window.location.replace(`http://localhost:${port}/successfulPurchase`)
 
     }catch(error){
 
@@ -80,7 +82,7 @@ socket.on("getProductsFromCart", (data)=>{
     if(data.length == 0){
         productsDiv.innerHTML = `<div class="carrito-vacio">
         <h1>CARRITO VACÍO</h1>
-        <a href="http://localhost:8080/products">volver a productos</a>
+        <a href="http://localhost:${port}/products">volver a productos</a>
     </div>`
         
     checkoutButton.remove()

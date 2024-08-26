@@ -1,4 +1,6 @@
-const socket = io("http://localhost:8080", {
+const port = window.location.port
+
+const socket = io(`http://localhost:${port}`, {
     transports: ['websocket'], 
     withCredentials: true 
 })

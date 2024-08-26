@@ -12,7 +12,7 @@ import { userController } from "../controllers/userController.js";
 
 const router = Router()
 
-const { jwtSecretKey } = config
+const { jwtSecretKey, port } = config
 
 router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAuth(), async (req, res) => {
 
@@ -39,7 +39,8 @@ router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAut
 
             return res.status(200).render("realTimeProducts", {
 
-                cartURL: `http://localhost:8080/carts/${user.cart}`,
+                cart: user.cart,
+                port,
                 products: productsWithPermissions,
                 style: "styles.css",
                 isAdmin: req.user.role == "admin" || false
@@ -53,7 +54,8 @@ router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAut
         res.status(200).render("realTimeProducts", {
 
             products: productsLimited,
-            cartURL: `http://localhost:8080/carts/${user.cart}`,
+            cart: user.cart,
+            port,
             style: "styles.css"       
 
         })
@@ -90,7 +92,8 @@ router.get("/products", passportCall("jwt"), roleAuth("all"), async (req, res)=>
         return res.status(200).render("products", {
 
             style: "styles.css",
-            cartURL: `http://localhost:8080/carts/${user.cart}`,
+            cart: user.cart,
+            port,
             first_name: req.user.first_name,
             last_name: req.user.last_name,
             products: result.docs,
@@ -132,8 +135,8 @@ router.get("/carts/:cartid", passportCall("jwt"), roleAuth("user"), async (req, 
             style: "styles.css",
             products: result.products,
             cart: req.user.cart,
+            port,
             email: req.user.email,
-            cartURL: `http://localhost:8080/carts/${req.user.cart}`,
             isAdmin: req.user.role == "admin" || false
 
         }) 
@@ -165,6 +168,7 @@ router.get("/login", async (req, res)=>{
 
         return res.render("login",{
             style: "styles.css",
+            port,
             redirected
         })
 
@@ -195,6 +199,7 @@ router.get("/register", async (req, res)=>{
 
     return res.render("register",{
         style: "styles.css",
+        port,
         redirected
     })
 
@@ -216,7 +221,8 @@ router.get("/", async (req, res) => {
     try{
 
         res.render("home", {
-            style: "styles.css"
+            style: "styles.css",
+            port
         })
 
     }catch(error){
@@ -241,7 +247,8 @@ router.get("/profile", passportCall("jwt"), roleAuth("all"), async (req, res)=>{
         
         res.render("profile",{
             style: "styles.css",
-            cartURL: `http://localhost:8080/carts/${req.user.cart}`,
+            port,
+            cart: req.user.cart,
             first_name: req.user.first_name,
             last_name: req.user.last_name,
             email: req.user.email,
@@ -276,7 +283,8 @@ router.get("/passwordRestore", async (req, res)=>{
         }
 
         return res.render("passwordRestore",{
-            style: "styles.css"
+            style: "styles.css",
+            port
         })
 
     }catch(error){
@@ -306,7 +314,8 @@ router.get("/confirmPasswordRestore/:restoreId", async (req, res) => {
 
         if(!restoreToken){
 
-            return res.status(400).send({status:"Error",
+            return res.status(400).send({
+                status:"Error",
                 payload: "El token no existe o expiró. Vuelve a solicitar una restauracion de contraseña"
             })
 
@@ -323,7 +332,8 @@ router.get("/confirmPasswordRestore/:restoreId", async (req, res) => {
         }
 
         return res.render("confirmPasswordRestore",{
-            style: "styles.css"
+            style: "styles.css",
+            port
         })
 
     }catch(error){
@@ -359,7 +369,8 @@ router.get("/successfulPurchase", passportCall("jwt"), async (req, res) => {
         }).render("successfulPurchase",{
             style: "styles.css",
             code: decoded.code,
-            cartURL: `http://localhost:8080/carts/${req.user.cart}`,
+            cart: req.user.cart,
+            port,
             isAdmin: req.user.role == "admin" || false
         })
 
@@ -398,7 +409,8 @@ router.get("/adminDashboard/users",passportCall("jwt"), roleAuth("admin"), async
 
         return res.render("userManagement",{
             style: "styles.css",
-            users: usersToShow
+            users: usersToShow,
+            port
         })
 
     }catch(error){

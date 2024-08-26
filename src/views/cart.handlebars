@@ -1,13 +1,13 @@
 
 <header>
-    <a href="http://localhost:8080/profile">profile</a>
-    <a href="http://localhost:8080/products">products</a>
-    <a href="http://localhost:8080/realTimeProducts">product admin</a>
+    <a href="http://localhost:{{port}}/profile">profile</a>
+    <a href="http://localhost:{{port}}/products">products</a>
+    <a href="http://localhost:{{port}}/realTimeProducts">product admin</a>
     {{#unless isAdmin}}
-    <a href={{cartURL}}>cart</a>
+    <a href="http://localhost:{{port}}/carts/{{cart}}">cart</a>
     {{/unless}}
     {{#if isAdmin}}
-        <a href="http://localhost:8080/adminDashboard/users">admin dashboard</a>
+        <a href="http://localhost:{{port}}/adminDashboard/users">admin dashboard</a>
     {{/if}}
 </header>
     <div class="products" id="products">
@@ -29,7 +29,7 @@
     {{#unless products}}
     <div class="carrito-vacio">
         <h1>CARRITO VACÍO</h1>
-        <a href="http://localhost:8080/products">volver a productos</a>
+        <a href="http://localhost:{{port}}/products">volver a productos</a>
     </div>
     {{/unless}}
         </div>
