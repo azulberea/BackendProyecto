@@ -1,5 +1,3 @@
-const port = window.location.port
-
 setTimeout( ()=>{
-    window.location.replace(`http://localhost:${port}/products`)
+    window.location.replace(`/products`)
 },6000)

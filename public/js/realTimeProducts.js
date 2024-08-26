@@ -1,9 +1,12 @@
 const port = window.location.port
 
-const socket = io(`http://localhost:${port}`, {
+const url = window.location.origin == `http://localhost:${port}` ? `http://localhost:${port}` : "https://beyond-supplements.onrender.com/"
+
+const socket = io(url, {
     transports: ['websocket'], 
     withCredentials: true 
 })
+
 const botonConfirmar = document.getElementById("button-confirm")
 const createProductsForm = document.getElementById("createProductsForm")
 const productsDiv = document.getElementById("products")

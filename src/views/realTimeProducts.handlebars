@@ -1,12 +1,12 @@
 <header>
-    <a href="http://localhost:{{port}}/profile">profile</a>
-    <a href="http://localhost:{{port}}/products">products</a>
-    <a href="http://localhost:{{port}}/realTimeProducts">product admin</a>
+    <a href="/profile">profile</a>
+    <a href="/products">products</a>
+    <a href="/realTimeProducts">product admin</a>
     {{#unless isAdmin}}
-    <a href="http://localhost:{{port}}/carts/{{cart}}">cart</a>
+    <a href="/carts/{{cart}}">cart</a>
     {{/unless}}
     {{#if isAdmin}}
-        <a href="http://localhost:{{port}}/adminDashboard/users">admin dashboard</a>
+        <a href="/adminDashboard/users">admin dashboard</a>
     {{/if}}
 </header>
 <form class="form" id="createProductsForm">

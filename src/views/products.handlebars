@@ -1,12 +1,12 @@
 <header>
-    <a href="http://localhost:{{port}}/profile">profile</a>
-    <a href="http://localhost:{{port}}/products">products</a>
-    <a href="http://localhost:{{port}}/realTimeProducts">product admin</a>
+    <a href="/profile">profile</a>
+    <a href="/products">products</a>
+    <a href="/realTimeProducts">product admin</a>
     {{#unless isAdmin}}
-    <a href="http://localhost:{{port}}/carts/{{cart}}">cart</a>
+    <a href="/carts/{{cart}}">cart</a>
     {{/unless}}
     {{#if isAdmin}}
-        <a href="http://localhost:{{port}}/adminDashboard/users">admin dashboard</a>
+        <a href="/adminDashboard/users">admin dashboard</a>
     {{/if}}
 </header>
 <h1> Bienvenid@ {{first_name}} {{last_name}}</h1>
@@ -31,8 +31,8 @@
     </div>
 </div>
 <div class="browse-pages" id="browsePages">
-    <a class="previous-page" href="http://localhost:{{port}}/products?page={{previousPage}}"><<</a>
-    <a class="next-page" href="http://localhost:{{port}}/products?page={{nextPage}}">>></a>
+    <a class="previous-page" href="products?page={{previousPage}}"><<</a>
+    <a class="next-page" href="/products?page={{nextPage}}">>></a>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

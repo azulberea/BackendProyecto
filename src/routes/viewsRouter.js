@@ -40,7 +40,6 @@ router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAut
             return res.status(200).render("realTimeProducts", {
 
                 cart: user.cart,
-                port,
                 products: productsWithPermissions,
                 style: "styles.css",
                 isAdmin: req.user.role == "admin" || false
@@ -55,7 +54,6 @@ router.get("/realTimeProducts", passportCall("jwt"), roleAuth("all"), premiumAut
 
             products: productsLimited,
             cart: user.cart,
-            port,
             style: "styles.css"       
 
         })
@@ -93,7 +91,6 @@ router.get("/products", passportCall("jwt"), roleAuth("all"), async (req, res)=>
 
             style: "styles.css",
             cart: user.cart,
-            port,
             first_name: req.user.first_name,
             last_name: req.user.last_name,
             products: result.docs,
@@ -135,7 +132,6 @@ router.get("/carts/:cartid", passportCall("jwt"), roleAuth("user"), async (req, 
             style: "styles.css",
             products: result.products,
             cart: req.user.cart,
-            port,
             email: req.user.email,
             isAdmin: req.user.role == "admin" || false
 
@@ -168,7 +164,6 @@ router.get("/login", async (req, res)=>{
 
         return res.render("login",{
             style: "styles.css",
-            port,
             redirected
         })
 
@@ -199,7 +194,6 @@ router.get("/register", async (req, res)=>{
 
     return res.render("register",{
         style: "styles.css",
-        port,
         redirected
     })
 
@@ -221,8 +215,7 @@ router.get("/", async (req, res) => {
     try{
 
         res.render("home", {
-            style: "styles.css",
-            port
+            style: "styles.css"
         })
 
     }catch(error){
@@ -247,7 +240,6 @@ router.get("/profile", passportCall("jwt"), roleAuth("all"), async (req, res)=>{
         
         res.render("profile",{
             style: "styles.css",
-            port,
             cart: req.user.cart,
             first_name: req.user.first_name,
             last_name: req.user.last_name,
@@ -284,7 +276,6 @@ router.get("/passwordRestore", async (req, res)=>{
 
         return res.render("passwordRestore",{
             style: "styles.css",
-            port
         })
 
     }catch(error){
@@ -332,8 +323,7 @@ router.get("/confirmPasswordRestore/:restoreId", async (req, res) => {
         }
 
         return res.render("confirmPasswordRestore",{
-            style: "styles.css",
-            port
+            style: "styles.css"
         })
 
     }catch(error){
@@ -370,7 +360,6 @@ router.get("/successfulPurchase", passportCall("jwt"), async (req, res) => {
             style: "styles.css",
             code: decoded.code,
             cart: req.user.cart,
-            port,
             isAdmin: req.user.role == "admin" || false
         })
 
@@ -409,8 +398,7 @@ router.get("/adminDashboard/users",passportCall("jwt"), roleAuth("admin"), async
 
         return res.render("userManagement",{
             style: "styles.css",
-            users: usersToShow,
-            port
+            users: usersToShow
         })
 
     }catch(error){
